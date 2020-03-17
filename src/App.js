@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import useInterval from "./useInterval";
 import './App.scss';
 
 const [ROWS, COLS] = [20, 20];
+const INTERVAL = 100;
 
 function Cell({cell, coord, toggleCell}) {
-
     return (
         <div
             onClick={e => toggleCell(coord)}
@@ -21,20 +22,18 @@ function Row({row, y, toggleCell}) {
         </div>
     )
 }
+function mod(x, m) {
+    return (x % m + m) % m;
+}
 
-const neighborVec = (c, cMax) => {
-    if (c === 0) {
-        return [0, 1];
-    } else if (c === cMax - 1) {
-        return [-1, 0];
-    } else {
-        return [-1, 0, 1];
-    }
+// this will let wrap the neighbor detection to wrap around
+const calcCoord = (y, yd, MAX) => {
+    return mod(y + yd, MAX);
 };
 
 const countNeighbors = ({x, y}, board) => {
-    const xDiff = neighborVec(x, COLS);
-    const yDiff = neighborVec(y, COLS);
+    const xDiff = [-1, 0, 1];
+    const yDiff = [-1, 0, 1];
     // create cartesian product of neighbor x and y potential coordinates
     const fullCartesianProduct = [].concat(...xDiff.map(x => yDiff.map(y => [x, y])));
     // filter out [0, 0] as it's the cells position
@@ -43,11 +42,10 @@ const countNeighbors = ({x, y}, board) => {
     let neighborCount = 0;
 
     for (let [xd, yd] of cartesianProduct) {
-        if (board[y + yd][x + xd] === 1) {
+        if (board[calcCoord(y, yd, ROWS)][calcCoord(x, xd, COLS)] === 1) {
             neighborCount += 1;
         }
     }
-
     return neighborCount;
 };
 
@@ -55,12 +53,13 @@ function App() {
     let startBoard = Array(ROWS).fill().map(() => Array(COLS).fill(0));
 
     const [board, setBoard] = useState(startBoard);
+    const [isRunning, setIsRunning] = useState(false);
 
     let toggleCell = (coord) => {
         const {x, y} = coord;
-
         let newBoard = [...board].map(arr => arr.slice(0));
         newBoard[y][x] = board[y][x] === 0 ? 1 : 0;
+        countNeighbors(coord, board);
         setBoard(newBoard);
     };
 
@@ -83,15 +82,19 @@ function App() {
                 }
             }
         }
-
         setBoard(newBoard);
     };
+
+    useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
     return (
         <div className="board">
             {board.map((row, index) => <Row key={index} row={row} y={index} toggleCell={toggleCell}/>)}
             <button onClick={advanceBoard}>
                 Neeeext!
+            </button>
+            <button onClick={e => setIsRunning(!isRunning)}>
+                {isRunning ? "Stop" : "Start"}
             </button>
         </div>
     );
