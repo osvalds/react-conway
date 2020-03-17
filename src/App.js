@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import useInterval from "./useInterval";
 import './App.scss';
+import useWindowSize from "./useWindowSize";
 
-const [ROWS, COLS] = [20, 20];
 const INTERVAL = 100;
 
 function Cell({cell, coord, toggleCell}) {
@@ -36,7 +36,7 @@ const calcCoord = (y, yd, MAX) => {
     return mod(y + yd, MAX);
 };
 
-const countNeighbors = ({x, y}, board) => {
+const countNeighbors = ({x, y}, board, ROWS, COLS) => {
     const xDiff = [-1, 0, 1];
     const yDiff = [-1, 0, 1];
     // create cartesian product of neighbor x and y potential coordinates
@@ -66,6 +66,10 @@ const isDesolate = (board) => {
 };
 
 function App() {
+
+    const windowSize = useWindowSize();
+    let ROWS = Math.floor((windowSize.height + 1) / (20 + 1));
+    let COLS = Math.floor((windowSize.width + 1) / (20 + 1));
     let startBoard = Array(ROWS).fill().map(() => Array(COLS).fill(0));
 
     const [board, setBoard] = useState(startBoard);
@@ -75,7 +79,6 @@ function App() {
         const {x, y} = coord;
         let newBoard = [...board].map(arr => arr.slice(0));
         newBoard[y][x] = board[y][x] === 0 ? 1 : 0;
-        countNeighbors(coord, board);
         setBoard(newBoard);
     };
 
@@ -85,7 +88,7 @@ function App() {
 
         for (let y = 0; y < currentBoard.length; y++) {
             for (let x = 0; x < currentBoard[y].length; x++) {
-                const neighborCount = countNeighbors({x, y}, currentBoard)
+                const neighborCount = countNeighbors({x, y}, currentBoard, ROWS, COLS)
 
                 if (currentBoard[y][x] === 1) {
                     if (neighborCount < 2 || neighborCount > 3) {
@@ -98,12 +101,12 @@ function App() {
                 }
             }
         }
-        console.log("is desolate:", isDesolate(newBoard))
+        // console.log("is desolate:", isDesolate(newBoard))
 
         setBoard(newBoard);
-        if (isDesolate(newBoard)) {
-            setIsRunning(false);
-        }
+        // if (isDesolate(newBoard)) {
+        //     setIsRunning(false);
+        // }
     };
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
@@ -111,12 +114,14 @@ function App() {
     return (
         <div className="board">
             {board.map((row, index) => <Row key={index} row={row} y={index} toggleCell={toggleCell}/>)}
-            <button onClick={advanceBoard}>
-                Neeeext!
-            </button>
-            <button onClick={e => setIsRunning(!isRunning)}>
-                {isRunning ? "Stop" : "Start"}
-            </button>
+            <div className="board__controls">
+                <button onClick={advanceBoard}>
+                    Neeeext!
+                </button>
+                <button onClick={e => setIsRunning(!isRunning)}>
+                    {isRunning ? "Stop" : "Start"}
+                </button>
+            </div>
         </div>
     );
 }

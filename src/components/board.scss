@@ -2,4 +2,10 @@
   display: grid;
   grid-row-gap: 1px;
   cursor: pointer;
+
+  &__controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
 }
