@@ -4,8 +4,12 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border: 1px solid gray;
   grid-row: 1;
   user-select: none;
   cursor: pointer;
+  background-color: #393e46;
+
+  &--1 {
+    background-color: #00adb5;
+  }
 }

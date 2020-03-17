@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import useInterval from "./useInterval";
 import './App.scss';
 
@@ -9,8 +9,7 @@ function Cell({cell, coord, toggleCell}) {
     return (
         <div
             onClick={e => toggleCell(coord)}
-            className="cell">
-            {cell}
+            className={`cell cell--${cell}`}>
         </div>
     )
 }
@@ -22,6 +21,7 @@ function Row({row, y, toggleCell}) {
         </div>
     )
 }
+
 function mod(x, m) {
     return (x % m + m) % m;
 }
