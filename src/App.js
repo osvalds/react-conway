@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+
+const [ROWS, COLS] = [20, 20];
+
+function Cell({cell}) {
+    return (
+        <div className="cell">
+            {cell}
+        </div>
+    )
+}
+
+function Row({row}) {
+    return (
+        <div className="row">
+            {row.map((cell, index) => <Cell key={index} cell={cell}/>)}
+        </div>
+    )
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+
+    return (
+        <div className="board">
+            {board.map((row, index) => <Row key={index} row={row}/>)}
+        </div>
+    );
 }
 
 export default App;
