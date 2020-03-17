@@ -37,16 +37,12 @@ const calcCoord = (y, yd, MAX) => {
 };
 
 const countNeighbors = ({x, y}, board, ROWS, COLS) => {
-    const xDiff = [-1, 0, 1];
-    const yDiff = [-1, 0, 1];
-    // create cartesian product of neighbor x and y potential coordinates
-    const fullCartesianProduct = [].concat(...xDiff.map(x => yDiff.map(y => [x, y])));
-    // filter out [0, 0] as it's the cells position
-    const cartesianProduct = fullCartesianProduct.filter(([x, y]) => !(x === 0 && y === 0))
+    // hard coded for perf reasons
+    const neighborDiff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 
     let neighborCount = 0;
 
-    for (let [xd, yd] of cartesianProduct) {
+    for (let [xd, yd] of neighborDiff) {
         if (board[calcCoord(y, yd, ROWS)][calcCoord(x, xd, COLS)] === 1) {
             neighborCount += 1;
         }
@@ -83,14 +79,14 @@ function App() {
     };
 
     let advanceBoard = () => {
-        const currentBoard = [...board].map(arr => arr.slice(0));
+        // const currentBoard = [...board].map(arr => arr.slice(0));
         let newBoard = [...board].map(arr => arr.slice(0));
 
-        for (let y = 0; y < currentBoard.length; y++) {
-            for (let x = 0; x < currentBoard[y].length; x++) {
-                const neighborCount = countNeighbors({x, y}, currentBoard, ROWS, COLS)
+        for (let y = 0; y < board.length; y++) {
+            for (let x = 0; x < board[y].length; x++) {
+                const neighborCount = countNeighbors({x, y}, board, ROWS, COLS);
 
-                if (currentBoard[y][x] === 1) {
+                if (board[y][x] === 1) {
                     if (neighborCount < 2 || neighborCount > 3) {
                         newBoard[y][x] = 0;
                     }
