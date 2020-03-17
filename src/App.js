@@ -9,6 +9,11 @@ function Cell({cell, coord, toggleCell}) {
     return (
         <div
             onClick={e => toggleCell(coord)}
+            onMouseOver={e => {
+                if (e.buttons === 1 || e.buttons === 3) {
+                    toggleCell(coord)
+                }
+            }}
             className={`cell cell--${cell}`}>
         </div>
     )
@@ -49,6 +54,17 @@ const countNeighbors = ({x, y}, board) => {
     return neighborCount;
 };
 
+const isDesolate = (board) => {
+    for (let y = 0; y < board.length; y++) {
+        for (let x = 0; x < board[y].length; x++) {
+            if (board[y][x] === 1) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
 function App() {
     let startBoard = Array(ROWS).fill().map(() => Array(COLS).fill(0));
 
@@ -82,7 +98,12 @@ function App() {
                 }
             }
         }
+        console.log("is desolate:", isDesolate(newBoard))
+
         setBoard(newBoard);
+        if (isDesolate(newBoard)) {
+            setIsRunning(false);
+        }
     };
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
