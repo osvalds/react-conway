@@ -24,7 +24,7 @@ const calcCoord = (y, yd, MAX) => {
     return mod(y + yd, MAX);
 };
 
-const countNeighbors = ({x, y}, board, ROWS, COLS) => {
+const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons
     const neighborDiff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 
@@ -32,7 +32,7 @@ const countNeighbors = ({x, y}, board, ROWS, COLS) => {
 
     for (let [xd, yd] of neighborDiff) {
         const xCoord2D = calcCoord(x, xd, COLS);
-        const yCoord2D = calcCoord(y, yd, COLS);
+        const yCoord2D = calcCoord(y, yd, ROWS);
 
         if (board[coordToIndex({x: xCoord2D, y: yCoord2D}, COLS)] === 1) {
             neighborCount += 1;
@@ -51,12 +51,13 @@ export default function useBoard(rows, cols, seed) {
         newBoard[clickedIndex] = board[clickedIndex] === 0 ? 1 : 0;
         setBoard(newBoard);
     };
+
     const advanceBoard = () => {
         let newBoard = [...board];
 
         for (let i = 0, boardLength = board.length; i < boardLength; i++) {
             const coord = indexToCoord(i, cols);
-            const neighborCount = countNeighbors(coord, board, rows, cols);
+            const neighborCount = countNeighbors(coord, board, cols, rows);
 
             if (board[i] === 1) {
                 if (neighborCount < 2 || neighborCount > 3) {
@@ -70,6 +71,7 @@ export default function useBoard(rows, cols, seed) {
         }
 
         setBoard(newBoard);
+
         if (isDesolate(newBoard)) {
             setIsRunning(false);
         }
