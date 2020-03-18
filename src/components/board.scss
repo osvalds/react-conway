@@ -1,7 +1,8 @@
 .board {
   display: grid;
-  grid-row-gap: 1px;
+  grid-gap: 1px;
   cursor: pointer;
+  grid-template-columns: repeat(auto-fill, minmax(20px, max-content));
 
   &__controls {
     position: fixed;
