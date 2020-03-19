@@ -6,7 +6,7 @@ import useBoard, {handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
 
 const INTERVAL = 50;
-const CELLSIZE = 20;
+const CELLSIZE = 15;
 const gridGap = 1;
 
 function Cell({index, cell, toggleCell}) {
@@ -120,6 +120,12 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                 </button>
                 <button onClick={e => setIsRunning(!isRunning)}>
                     {isRunning ? "Stop" : "Start"}
+                </button>
+                <button onClick={() => {
+                    setIsRunning(false);
+                    setBoard([...board].fill(0))
+                }}>
+                    Reset
                 </button>
             </div>
         </Fragment>
