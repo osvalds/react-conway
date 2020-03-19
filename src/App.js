@@ -2,7 +2,7 @@ import React, {useRef, Fragment, useEffect, useState} from 'react';
 import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
-import useBoard from "./hooks/useBoard";
+import useBoard, {handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
 
 const INTERVAL = 50;
@@ -35,7 +35,7 @@ function Board({board, toggleCell}) {
     )
 }
 
-function CanvasBoard({board, toggleCell, windowSize, cols, rows}) {
+function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCols, setRows}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
 
@@ -55,12 +55,12 @@ function CanvasBoard({board, toggleCell, windowSize, cols, rows}) {
         const newRows = Math.floor((windowSize.height + gridGap) / (CELLSIZE + gridGap));
         const newCols = Math.floor((windowSize.width + gridGap) / (CELLSIZE + gridGap));
 
-        console.log(rows, cols)
         if (cols !== newCols || rows !== newRows) {
-
-            console.log("boardneeds change")
+            setBoard(handleBoardDimensionChange(board, cols, rows, newCols, newRows));
+            setRows(newRows);
+            setCols(newCols);
         }
-    }, [windowSize, cols, rows]);
+    });
 
     useEffect(() => {
         clearCanvas(canvasRef);
@@ -101,16 +101,19 @@ function CanvasBoard({board, toggleCell, windowSize, cols, rows}) {
     );
 }
 
-function BoardWrapper({COLS, ROWS, seed, windowSize}) {
+function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
-    const [board, setBoard, isRunning, setIsRunning, toggleCell, advanceBoard] = useBoard(ROWS, COLS, seed);
+    const [board, setBoard, isRunning, setIsRunning, toggleCell, advanceBoard] = useBoard(rows, cols, seed);
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
     return (
         <Fragment>
             {/*<Board board={board} COLS={COLS} toggleCell={toggleCell}/>*/}
-            <CanvasBoard board={board} toggleCell={toggleCell} windowSize={windowSize} cols={COLS} rows={ROWS}/>
+            <CanvasBoard board={board} setBoard={setBoard} toggleCell={toggleCell} windowSize={windowSize} cols={cols}
+                         setCols={setCols}
+                         setRows={setRows}
+                         rows={rows}/>
             <div className="board__controls">
                 <button onClick={advanceBoard}>
                     Neeeext!
@@ -130,7 +133,7 @@ function App() {
     const seed = Array(rows * cols).fill(0);
 
     return (
-        <BoardWrapper ROWS={rows} COLS={cols} seed={seed} windowSize={windowSize}/>
+        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols}/>
     );
 }
 

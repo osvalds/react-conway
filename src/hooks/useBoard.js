@@ -35,6 +35,27 @@ export const removeRows = (board, cCols, cRows, nRows) => {
     return board.slice(0, cCols * nRows)
 };
 
+export const handleBoardDimensionChange = (board, cCols, cRows, nCols, nRows) => {
+    const colDiff = nCols - cCols;
+    const rowDiff = nRows - cRows;
+
+    let nBoard = [...board];
+
+    if (colDiff > 0) {
+        nBoard = addCols(board, cCols, cRows, nCols);
+    } else if (colDiff < 0) {
+        nBoard = removeCols(board, cCols, cRows, nCols);
+    }
+
+    if (rowDiff > 0) {
+        nBoard = addRows(nBoard, nCols, cRows, nRows);
+    } else if (rowDiff < 0) {
+        nBoard = removeRows(nBoard, nCols, cRows, nRows);
+    }
+
+    return nBoard;
+};
+
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons
     const neighborDiff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];

@@ -1,4 +1,4 @@
-import {addCols, removeCols, addRows, removeRows} from "./useBoard";
+import {addCols, removeCols, addRows, removeRows, handleBoardDimensionChange} from "./useBoard";
 
 it("adds 1 empty col to existing board", () => {
     const board = [
@@ -130,7 +130,7 @@ it("Adds 2 empty rows to the board", () => {
     expect(addRows(board, cCols, cRows, nRows)).toEqual(result)
 });
 
-it("Removes 1 row fromthe board", () => {
+it("Removes 1 row from the board", () => {
     const board = [
         0, 1,
         0, 0,
@@ -150,7 +150,7 @@ it("Removes 1 row fromthe board", () => {
     expect(removeRows(board, cCols, cRows, nRows)).toEqual(result)
 });
 
-it("Removes 3 row fromthe board", () => {
+it("Removes 3 row from the board", () => {
     const board = [
         0, 1,
         0, 0,
@@ -170,4 +170,133 @@ it("Removes 3 row fromthe board", () => {
     ];
 
     expect(removeRows(board, cCols, cRows, nRows)).toEqual(result)
+});
+
+it("handles board resizing, from 2x3 -> 3x3", () => {
+    const board = [
+        0, 1,
+        0, 0,
+        1, 0
+    ];
+
+    const cCols = 2;
+    const cRows = 3;
+
+    const nCols = 3;
+    const nRows = 3;
+
+    const result = [
+        0, 1, 0,
+        0, 0, 0,
+        1, 0, 0
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+it("handles board resizing, from 3x3 -> 2x3", () => {
+    const board = [
+        0, 1, 0,
+        0, 0, 0,
+        1, 0, 0
+    ];
+
+    const cCols = 3;
+    const cRows = 3;
+
+    const nCols = 2;
+    const nRows = 3;
+
+    const result = [
+        0, 1,
+        0, 0,
+        1, 0
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+it("handles board resizing, from 3x2 -> 3x3", () => {
+    const board = [
+        0, 1, 0,
+        0, 1, 0
+    ];
+
+    const cCols = 3;
+    const cRows = 2;
+
+    const nCols = 3;
+    const nRows = 3;
+
+    const result = [
+        0, 1, 0,
+        0, 1, 0,
+        0, 0, 0
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+it("handles board resizing, from 3x3 -> 3x2", () => {
+    const board = [
+        0, 1, 0,
+        0, 1, 0,
+        1, 1, 1
+    ];
+
+    const cCols = 3;
+    const cRows = 3;
+
+    const nCols = 3;
+    const nRows = 2;
+
+    const result = [
+        0, 1, 0,
+        0, 1, 0,
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+
+it("handles board resizing, from 2x2 -> 3x3", () => {
+    const board = [
+        0, 1,
+        0, 1
+    ];
+
+    const cCols = 2;
+    const cRows = 2;
+
+    const nCols = 3;
+    const nRows = 3;
+
+    const result = [
+        0, 1, 0,
+        0, 1, 0,
+        0, 0, 0
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+it("handles board resizing, from 3x3 -> 2x2", () => {
+    const board = [
+        0, 1, 0,
+        0, 1, 0,
+        1, 0, 0
+    ];
+
+    const cCols = 3;
+    const cRows = 3;
+
+    const nCols = 2;
+    const nRows = 2;
+
+    const result = [
+        0, 1,
+        0, 1,
+    ];
+
+    expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
 });
