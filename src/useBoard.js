@@ -4,14 +4,14 @@ const isDesolate = (board) => {
     board.every((cell) => cell === 0)
 };
 
-const indexToCoord = (index, cols) => {
+export const indexToCoord = (index, cols) => {
     return {
         x: index % cols,
         y: Math.floor(index / cols)
     }
 };
 
-const coordToIndex = ({x, y}, cols) => {
+export const coordToIndex = ({x, y}, cols) => {
     return y * cols + x;
 };
 
@@ -42,7 +42,6 @@ const countNeighbors = ({x, y}, board, COLS, ROWS) => {
 };
 
 export default function useBoard(rows, cols, seed) {
-
     const [board, setBoard] = useState(seed);
     const [isRunning, setIsRunning] = useState(false);
 
