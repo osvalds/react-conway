@@ -1,19 +1,5 @@
 import {useState} from "react";
-
-const isDesolate = (board) => {
-    board.every((cell) => cell === 0)
-};
-
-export const indexToCoord = (index, cols) => {
-    return {
-        x: index % cols,
-        y: Math.floor(index / cols)
-    }
-};
-
-export const coordToIndex = ({x, y}, cols) => {
-    return y * cols + x;
-};
+import {coordToIndex, indexToCoord, isDesolate} from "./util"
 
 const mod = (x, m) => {
     return (x % m + m) % m;

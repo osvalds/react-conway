@@ -2,7 +2,8 @@ import React, {useRef, Fragment, useEffect, useState} from 'react';
 import useInterval from "./useInterval";
 import './App.scss';
 import useWindowSize from "./useWindowSize";
-import useBoard, {coordToIndex, indexToCoord} from "./useBoard";
+import useBoard from "./useBoard";
+import {indexToCoord, coordToIndex} from "./util"
 
 const INTERVAL = 50;
 const CELLSIZE = 20;
