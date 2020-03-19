@@ -1,8 +1,8 @@
 import React, {useRef, Fragment, useEffect, useState} from 'react';
-import useInterval from "./useInterval";
+import useInterval from "./hooks/useInterval";
 import './App.scss';
-import useWindowSize from "./useWindowSize";
-import useBoard from "./useBoard";
+import useWindowSize from "./hooks/useWindowSize";
+import useBoard from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
 
 const INTERVAL = 50;

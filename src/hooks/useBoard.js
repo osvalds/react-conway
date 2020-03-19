@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {calcNeighborCoordinate, coordToIndex, indexToCoord, isDesolate} from "./util"
+import {calcNeighborCoordinate, coordToIndex, indexToCoord, isDesolate} from "../util"
 
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons

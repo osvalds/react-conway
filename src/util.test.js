@@ -1,6 +1,5 @@
 import {indexToCoord, coordToIndex, isDesolate, mod, calcNeighborCoordinate} from "./util"
 
-
 it("converts index->coord", () => {
     expect(indexToCoord(0, 10)).toEqual({x: 0, y: 0});
     expect(indexToCoord(24, 10)).toEqual({x: 4, y: 2});
@@ -31,3 +30,4 @@ it("calculates neighbor's one coordinate given current, diff and total size of d
     expect(calcNeighborCoordinate(2, -1, 20)).toBe(1);
     expect(calcNeighborCoordinate(2, 0, 20)).toBe(2);
 });
+
