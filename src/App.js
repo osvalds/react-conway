@@ -9,32 +9,6 @@ const INTERVAL = 50;
 const CELLSIZE = 15;
 const gridGap = 1;
 
-function Cell({index, cell, toggleCell}) {
-    return (
-        <div
-            onClick={() => toggleCell(index)}
-            onMouseEnter={(e) => {
-                if (e.buttons === 1 || e.buttons === 3) {
-                    toggleCell(index)
-                }
-            }}
-            className={`cell cell--${cell}`}>
-        </div>
-    )
-}
-
-function Board({board, toggleCell}) {
-    return (
-        <div className="board">
-            {board.map((cell, index) => {
-                return (
-                    <Cell key={index} index={index} cell={cell} toggleCell={toggleCell}/>
-                )
-            })}
-        </div>
-    )
-}
-
 function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCols, setRows}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
@@ -109,7 +83,6 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
     return (
         <Fragment>
-            {/*<Board board={board} COLS={COLS} toggleCell={toggleCell}/>*/}
             <CanvasBoard board={board} setBoard={setBoard} toggleCell={toggleCell} windowSize={windowSize} cols={cols}
                          setCols={setCols}
                          setRows={setRows}
