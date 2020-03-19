@@ -1,6 +1,19 @@
 import {useState} from "react";
 import {calcNeighborCoordinate, coordToIndex, indexToCoord, isDesolate} from "../util"
 
+export const addCols = (board, cCols, cRows, nCols, nRows) => {
+    const colsToAdd = nCols - cCols;
+
+    for (let i = 1; i <= cRows; i++) {
+        const newColsAdded = (i - 1) * colsToAdd;
+        const currentPosition = i * cCols;
+
+        board.splice(newColsAdded + currentPosition, 0, ...Array(colsToAdd).fill(0))
+    }
+
+    return board;
+};
+
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons
     const neighborDiff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
