@@ -1,4 +1,4 @@
-import {indexToCoord, coordToIndex, isDesolate} from "./util"
+import {indexToCoord, coordToIndex, isDesolate, mod, calcNeighborCoordinate} from "./util"
 
 
 it("converts index->coord", () => {
@@ -16,4 +16,18 @@ it("checks if the board is empty", () => {
     expect(isDesolate([0, 0, 0, 0, 1])).toBe(false);
 });
 
+it("does modulo operation, to wrap the numbers", () => {
+    expect(mod(0, 19)).toBe(0);
+    expect(mod(-1, 19)).toBe(18);
+    expect(mod(5, 19)).toBe(5);
+});
 
+it("calculates neighbor's one coordinate given current, diff and total size of dimension", () => {
+    expect(calcNeighborCoordinate(0, 1, 20)).toBe(1);
+    expect(calcNeighborCoordinate(0, -1, 20)).toBe(19);
+    expect(calcNeighborCoordinate(0, 0, 20)).toBe(0);
+
+    expect(calcNeighborCoordinate(2, 1, 20)).toBe(3);
+    expect(calcNeighborCoordinate(2, -1, 20)).toBe(1);
+    expect(calcNeighborCoordinate(2, 0, 20)).toBe(2);
+});

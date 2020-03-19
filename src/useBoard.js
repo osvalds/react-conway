@@ -1,14 +1,5 @@
 import {useState} from "react";
-import {coordToIndex, indexToCoord, isDesolate} from "./util"
-
-const mod = (x, m) => {
-    return (x % m + m) % m;
-};
-
-// this will let wrap the neighbor detection to wrap around
-const calcCoord = (y, yd, MAX) => {
-    return mod(y + yd, MAX);
-};
+import {calcNeighborCoordinate, coordToIndex, indexToCoord, isDesolate} from "./util"
 
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons
@@ -17,8 +8,8 @@ const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     let neighborCount = 0;
 
     for (let [xd, yd] of neighborDiff) {
-        const xCoord2D = calcCoord(x, xd, COLS);
-        const yCoord2D = calcCoord(y, yd, ROWS);
+        const xCoord2D = calcNeighborCoordinate(x, xd, COLS);
+        const yCoord2D = calcNeighborCoordinate(y, yd, ROWS);
 
         if (board[coordToIndex({x: xCoord2D, y: yCoord2D}, COLS)] === 1) {
             neighborCount += 1;
