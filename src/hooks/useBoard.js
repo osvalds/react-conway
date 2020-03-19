@@ -26,6 +26,10 @@ export const removeCols = (board, cCols, cRows, nCols) => {
     return board;
 };
 
+export const addRows = (board, cCols, cRows, nRows) => {
+    const rowsToAdd = nRows - cRows;
+    return [...board, ...Array(rowsToAdd * cCols).fill(0)]
+};
 
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons

@@ -1,4 +1,4 @@
-import {addCols, removeCols} from "./useBoard";
+import {addCols, removeCols, addRows} from "./useBoard";
 
 it("adds 1 empty col to existing board", () => {
     const board = [
@@ -83,4 +83,49 @@ it("removes 2 cols from array", () => {
     ];
 
     expect(removeCols(board, cCols, cRows, nCols)).toEqual(result)
+});
+
+it("Adds 1 empty row to the board", () => {
+    const board = [
+        0, 1,
+        0, 0,
+        1, 0,
+    ];
+
+    const cCols = 2;
+    const cRows = 3;
+
+    const nRows = 4;
+
+    const result = [
+        0, 1,
+        0, 0,
+        1, 0,
+        0, 0
+    ];
+
+    expect(addRows(board, cCols, cRows, nRows)).toEqual(result)
+});
+
+it("Adds 2 empty rows to the board", () => {
+    const board = [
+        0, 1,
+        0, 0,
+        1, 0,
+    ];
+
+    const cCols = 2;
+    const cRows = 3;
+
+    const nRows = 5;
+
+    const result = [
+        0, 1,
+        0, 0,
+        1, 0,
+        0, 0,
+        0, 0
+    ];
+
+    expect(addRows(board, cCols, cRows, nRows)).toEqual(result)
 });
