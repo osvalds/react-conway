@@ -1,3 +1,5 @@
+import {indexToCoord} from "../util";
+
 export const brushes = [
     {
         name: "pixel",
@@ -32,4 +34,17 @@ export const centerCoord = ({rows, cols}) => {
         x: Math.floor((cols - 1) / 2),
         y: Math.floor((rows - 1) / 2)
     }
+};
+
+export const brushDistanceVecFromCenter = ({rows, cols, template}) => {
+    const {x: bcx, y: bcy} = centerCoord({rows, cols});
+    let distanceVecsFromCenter = [];
+
+    for (let i = 0, brushSize = template.length; i < brushSize; i++) {
+        let {x: cbpx, y: cbpy} = indexToCoord(i, cols);
+
+        distanceVecsFromCenter.push([cbpx - bcx, cbpy - bcy])
+    }
+
+    return distanceVecsFromCenter;
 };
