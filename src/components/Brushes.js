@@ -42,8 +42,12 @@ export const rotateTemplate90deg = ({template, rows, cols}) => {
 };
 
 export const rotateBrush90deg = (brush) => {
-    let newTemplate = rotateTemplate90deg(brush);
-    return {...brush, ...newTemplate, get distanceVec() {return brushDistanceVecFromCenter(this)}}
+    const newTemplate = rotateTemplate90deg(brush);
+    return {
+        ...brush,
+        ...newTemplate,
+        distanceVec: brushDistanceVecFromCenter(newTemplate)
+    }
 };
 
 export const brushes = [
@@ -52,10 +56,7 @@ export const brushes = [
         displayName: "Pixel",
         rows: 1,
         cols: 1,
-        template: [1],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        template: [1]
     },
     {
         name: "glider",
@@ -66,10 +67,7 @@ export const brushes = [
             0, 1, 0,
             0, 0, 1,
             1, 1, 1
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        ]
     },
     {
         name: "diehard",
@@ -79,10 +77,7 @@ export const brushes = [
         template: [
             1, 1, 0, 0, 0, 0, 1, 0,
             0, 1, 0, 0, 0, 1, 1, 1,
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        ]
     },
     {
         name: "rpentomino",
@@ -93,10 +88,7 @@ export const brushes = [
             0, 1, 1,
             1, 1, 0,
             0, 1, 0
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        ]
     },
     {
         name: "mwss",
@@ -109,10 +101,7 @@ export const brushes = [
             1, 0, 0, 0, 0, 0,
             1, 0, 0, 0, 0, 1,
             1, 1, 1, 1, 1, 0,
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        ]
     },
     {
         name: "hwss",
@@ -125,10 +114,7 @@ export const brushes = [
             1, 0, 0, 0, 0, 0, 0,
             1, 0, 0, 0, 0, 0, 1,
             1, 1, 1, 1, 1, 1, 0,
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
+        ]
     },
     {
         name: "gospergun",
@@ -145,16 +131,14 @@ export const brushes = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        get distanceVec() {
-            return brushDistanceVecFromCenter(this)
-        }
-
+        ]
     }
 ];
 
 export const getBrush = (name) => {
-    return brushes.filter(brush => brush.name === name)[0];
+    let b = brushes.filter(brush => brush.name === name)[0];
+    b.distanceVec = brushDistanceVecFromCenter(b);
+    return b;
 };
 
 export function BrushSelector({onChange, selectedBrush}) {

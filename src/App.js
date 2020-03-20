@@ -4,9 +4,9 @@ import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
 import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
-import {BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
+import {brushDistanceVecFromCenter, BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
 
-const INTERVAL = 50;
+const INTERVAL = 10;
 const CELLSIZE = 15;
 const gridGap = 1;
 
@@ -92,13 +92,19 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     );
 }
 
-function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
+function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBrush}) {
     const [mouse, setMouse] = useState(null);
     const [hoverBoard, setHoverBoard] = useBoard(rows, cols, seed);
     const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
-    const [selectedBrush, setSelectedBrush] = useState(getBrush("glider"));
+    const [selectedBrush, setSelectedBrush] = useState(defaultBrush);
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
+
+    const setSelectedBrushWrapper = useCallback((newBrush) => {
+        //Caches the distance vector, otherwise it is calculated on every render
+        newBrush.distanceVec = brushDistanceVecFromCenter(newBrush);
+        setSelectedBrush(newBrush);
+    }, [setSelectedBrush]);
 
     const toggleIsRunning = useCallback((event) => {
         if (event.keyCode === 32 || event.type === "click") {
@@ -131,11 +137,12 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
     const memoRotateBrush = useCallback((event) => {
         if (event.code === "KeyR") {
-            setSelectedBrush(rotateBrush90deg(selectedBrush))
+            setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
             const cCoord = clickCoord(mouse.x, mouse.y);
+
             setHoverBoard(applyBrush(cCoord, seed, cols, rows, rotateBrush90deg(selectedBrush)));
         }
-    }, [setSelectedBrush, selectedBrush, mouse]);
+    }, [setSelectedBrushWrapper, selectedBrush, mouse]);
 
     useEffect(() => {
         document.addEventListener("keydown", memoRotateBrush, false);
@@ -171,10 +178,10 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                 }}>
                     Reset
                 </button>
-                <BrushSelector onChange={e => setSelectedBrush(getBrush((e.target.value)))}
+                <BrushSelector onChange={e => setSelectedBrushWrapper(getBrush((e.target.value)))}
                                selectedBrush={selectedBrush}/>
                 <button onClick={() => {
-                    setSelectedBrush(rotateBrush90deg(selectedBrush))
+                    setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
                 }}>
                     Rotate 90deg (shift + r)
                 </button>
@@ -185,12 +192,14 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
 function App() {
     const windowSize = useWindowSize();
+    const defaultBrush = getBrush("glider");
+    // defaultBrush.distanceVec = brushDistanceVecFromCenter(defaultBrush);
     const [rows, setRows] = useState(Math.floor((windowSize.height + gridGap) / (CELLSIZE + gridGap)));
     const [cols, setCols] = useState(Math.floor((windowSize.width + gridGap) / (CELLSIZE + gridGap)));
     const seed = Array(rows * cols).fill(0);
 
     return (
-        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols}/>
+        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols} defaultBrush={defaultBrush}/>
     );
 }
 
