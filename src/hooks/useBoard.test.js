@@ -1,4 +1,5 @@
-import {addCols, removeCols, addRows, removeRows, handleBoardDimensionChange} from "./useBoard";
+import {addCols, removeCols, addRows, removeRows, handleBoardDimensionChange, applyBrush} from "./useBoard";
+import {getBrush} from "../components/brushes"
 
 it("adds 1 empty col to existing board", () => {
     const board = [
@@ -299,4 +300,54 @@ it("handles board resizing, from 3x3 -> 2x2", () => {
     ];
 
     expect(handleBoardDimensionChange(board, cCols, cRows, nCols, nRows)).toEqual(result)
+});
+
+it("applies pixel brush on 3x3 at 1,1", () => {
+    const clickCoords = {x: 1, y: 1};
+    const cols = 3;
+    const rows = 3;
+    const board = Array(rows * cols).fill(0);
+    const brush = getBrush("pixel")
+
+    const resultBoard = [
+        0, 0, 0,
+        0, 1, 0,
+        0, 0, 0
+    ];
+
+    expect(applyBrush(clickCoords, board, cols, rows, brush)).toEqual(resultBoard);
+});
+
+it("applies glider brush on 4x4 at 1,1", () => {
+    const clickCoords = {x: 1, y: 1};
+    const cols = 4;
+    const rows = 4;
+    const board = Array(rows * cols).fill(0);
+    const brush = getBrush("glider")
+
+    const resultBoard = [
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        1, 1, 1, 0,
+        0, 0, 0, 0
+    ];
+
+    expect(applyBrush(clickCoords, board, cols, rows, brush)).toEqual(resultBoard);
+});
+
+it("applies glider brush on 4x4 at 3,0", () => {
+    const clickCoords = {x: 3, y: 0};
+    const cols = 4;
+    const rows = 4;
+    const board = Array(rows * cols).fill(0);
+    const brush = getBrush("glider");
+
+    const resultBoard = [
+        1, 0, 0, 0,
+        1, 0, 1, 1,
+        0, 0, 0, 0,
+        0, 0, 0, 1
+    ];
+
+    expect(applyBrush(clickCoords, board, cols, rows, brush)).toEqual(resultBoard);
 });

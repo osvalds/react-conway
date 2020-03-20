@@ -56,6 +56,26 @@ export const handleBoardDimensionChange = (board, cCols, cRows, nCols, nRows) =>
     return nBoard;
 };
 
+export const applyBrush = ({x, y}, board, bCols, bRows, brush) => {
+    // cache the distance vector
+    const brushDistanceVec = brush.distanceVec;
+
+    let nBoard = [...board];
+
+    for (let i = 0, l = brushDistanceVec.length; i < l; i++) {
+        const [xd, yd] = brushDistanceVec[i];
+
+        const boardIndex = coordToIndex({
+            x: calcNeighborCoordinate(x, xd, bCols),
+            y: calcNeighborCoordinate(y, yd, bRows)
+        }, bCols);
+
+        nBoard[boardIndex] = brush.template[i];
+    }
+
+    return nBoard;
+};
+
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons
     const neighborDiff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];

@@ -1,33 +1,5 @@
 import {indexToCoord} from "../util";
 
-export const brushes = [
-    {
-        name: "pixel",
-        rows: 1,
-        cols: 1,
-        template: [1],
-    },
-    {
-        name: "glider",
-        rows: 3,
-        cols: 3,
-        template: [
-            0, 1, 0,
-            0, 0, 1,
-            1, 1, 1
-        ]
-    },
-    {
-        name: "diehard",
-        rows: 3,
-        cols: 8,
-        template: [
-            0, 0, 0, 0, 0, 0, 0, 0,
-            1, 1, 0, 0, 0, 0, 1, 0,
-            0, 1, 0, 0, 0, 1, 1, 1,
-        ]
-    }
-];
 
 export const centerCoord = ({rows, cols}) => {
     return {
@@ -38,13 +10,55 @@ export const centerCoord = ({rows, cols}) => {
 
 export const brushDistanceVecFromCenter = ({rows, cols, template}) => {
     const {x: bcx, y: bcy} = centerCoord({rows, cols});
-    let distanceVecsFromCenter = [];
+    let distanceVecsFromCenter = Array(rows * cols);
 
     for (let i = 0, brushSize = template.length; i < brushSize; i++) {
         let {x: cbpx, y: cbpy} = indexToCoord(i, cols);
 
-        distanceVecsFromCenter.push([cbpx - bcx, cbpy - bcy])
+        distanceVecsFromCenter[i] = [cbpx - bcx, cbpy - bcy]
     }
 
     return distanceVecsFromCenter;
+};
+
+export const brushes = [
+    {
+        name: "pixel",
+        rows: 1,
+        cols: 1,
+        template: [1],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
+    },
+    {
+        name: "glider",
+        rows: 3,
+        cols: 3,
+        template: [
+            0, 1, 0,
+            0, 0, 1,
+            1, 1, 1
+        ],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
+    },
+    {
+        name: "diehard",
+        rows: 3,
+        cols: 8,
+        template: [
+            0, 0, 0, 0, 0, 0, 0, 0,
+            1, 1, 0, 0, 0, 0, 1, 0,
+            0, 1, 0, 0, 0, 1, 1, 1,
+        ],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
+    }
+];
+
+export const getBrush = (name) => {
+    return brushes.filter(brush => brush.name === name)[0];
 };
