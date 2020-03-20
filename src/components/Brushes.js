@@ -142,10 +142,10 @@ export const getBrush = (name) => {
 };
 
 export function BrushSelector({onChange, selectedBrush}) {
-
-
     return (
-        <select value={selectedBrush.name} onChange={onChange}>
+        <select
+            className="select"
+            value={selectedBrush.name} onChange={onChange}>
             {brushes.map(brush => {
                 return (
                     <option key={brush.name} value={brush.name}>

@@ -1,0 +1,38 @@
+:root {
+  --button-primary-color: #fff;
+  --button-primary-bgcolor: #ff1e56;;
+  --button-hover-color: #bd1c4e;;
+}
+
+.button {
+  font-family: monospace;
+  font-weight: 900;
+  display: inline-block;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 5px 12px;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: var(--button-primary-bgcolor);
+  color: var(--button-primary-color);
+  border: none;
+  position: relative;
+  vertical-align: middle;
+  overflow: hidden;
+  z-index: 0;
+  transition: .2s linear;
+
+  &:hover, &:focus, &:active {
+    background-color: var(--button-hover-color);
+    cursor: pointer;
+  }
+
+  &--disabled {
+    pointer-events: none;
+    user-select: none;
+    cursor: default;
+    opacity: 0.5;
+  }
+}

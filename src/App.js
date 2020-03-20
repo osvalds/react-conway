@@ -5,6 +5,7 @@ import useWindowSize from "./hooks/useWindowSize";
 import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
 import {brushDistanceVecFromCenter, BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
+import Controls from "./components/Controls";
 
 const INTERVAL = 50;
 const CELLSIZE = 15;
@@ -156,27 +157,14 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                          setHoverBoard={setHoverBoard}
                          hoverBoard={hoverBoard}
             />
-            <div className="controls">
-                <button onClick={advanceBoard}>
-                    Neeeext!
-                </button>
-                <button onClick={toggleIsRunning}>
-                    {isRunning ? "Stop" : "Start"}
-                </button>
-                <button onClick={() => {
-                    setIsRunning(false);
-                    setBoard([...board].fill(0))
-                }}>
-                    Reset
-                </button>
-                <BrushSelector onChange={e => setSelectedBrushWrapper(getBrush((e.target.value)))}
-                               selectedBrush={selectedBrush}/>
-                <button onClick={() => {
-                    setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
-                }}>
-                    Rotate 90deg (shift + r)
-                </button>
-            </div>
+            <Controls advanceBoard={advanceBoard}
+                      toggleIsRunning={toggleIsRunning}
+                      isRunning={isRunning}
+                      setIsRunning={setIsRunning}
+                      setBoard={setBoard}
+                      board={board}
+                      setSelectedBrushWrapper={setSelectedBrushWrapper}
+                      selectedBrush={selectedBrush}/>
         </Fragment>
     )
 }
