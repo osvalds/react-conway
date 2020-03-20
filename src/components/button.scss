@@ -24,9 +24,15 @@
   z-index: 0;
   transition: .2s linear;
 
+  margin-bottom: 8px;
+
   &:hover, &:focus, &:active {
     background-color: var(--button-hover-color);
     cursor: pointer;
+  }
+
+  &--desktop {
+    display: none;
   }
 
   &--disabled {
@@ -36,7 +42,26 @@
     opacity: 0.5;
   }
 
-  span {
+  &__shortcut {
+    display: none;
+  }
+
+  .shift {
     font-family: sans-serif;
   }
+
+  @media only screen and (min-width: 1000px) {
+    &--desktop {
+      display: block;
+    }
+
+    &--mobile {
+      display: none;
+    }
+
+    &__shortcut {
+      display: inline;
+    }
+  }
+
 }

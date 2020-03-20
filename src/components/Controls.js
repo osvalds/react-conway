@@ -4,7 +4,7 @@ import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
 export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush}) {
 
     const memoBoardReset = useCallback((event) => {
-        if (event.code === "KeyE") {
+        if (event.code === "KeyE" || event.type === "click") {
             setIsRunning(false);
             setBoard([...board].fill(0))
         }
@@ -19,7 +19,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
 
 
     const memoNext = useCallback((event) => {
-        if (event.code === "KeyW") {
+        if (event.code === "KeyW" || event.type === "click") {
             setIsRunning(false);
             advanceBoard();
         }
@@ -40,17 +40,27 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                     setIsRunning(false);
                     advanceBoard()
                 }}>
-                Next [<span>⇧</span>+w]
+                Next <span className="button__shortcut">[<span className="shift">⇧</span>+w]</span>
             </button>
             <button
                 className="button"
                 onClick={toggleIsRunning}>
-                {isRunning ? "Stop [space]" : "Start [space]"}
+                {isRunning ? "Stop " : "Start "}
+                <span className="button__shortcut">[space]</span>
             </button>
             <button
                 className="button"
                 onClick={memoBoardReset}>
-                Reset [<span>⇧</span>+e]
+                Reset
+                <span className="button__shortcut">[<span className="shift">⇧</span>+e]</span>
+            </button>
+            <button
+                className="button button--mobile"
+                onClick={() => {
+                    setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
+                }}>
+                Rotate 90deg
+                <span className="button__shortcut">[<span className="shift">⇧</span>+r]</span>
             </button>
             <BrushSelector onChange={e => {
                 setSelectedBrushWrapper(getBrush((e.target.value)))
@@ -58,11 +68,12 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
             }}
                            selectedBrush={selectedBrush}/>
             <button
-                className="button"
+                className="button button--desktop"
                 onClick={() => {
                     setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
                 }}>
-                Rotate 90deg [<span>⇧</span>+r]
+                Rotate 90deg
+                <span className="button__shortcut">[<span className="shift">⇧</span>+r]</span>
             </button>
         </div>
     );

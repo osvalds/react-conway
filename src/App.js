@@ -69,6 +69,10 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             ref={canvasRef}
             width={windowSize.width}
             height={windowSize.height}
+            // onBlur={() => {
+            //     console.log("blur")
+            //     setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, getBrush("blank")));
+            // }}
             onClick={e => {
                 const index = clickCoordToIndex(e.pageX, e.pageY, cols);
                 const cCoord = clickCoord(e.pageX, e.pageY);
