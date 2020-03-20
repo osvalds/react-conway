@@ -6,9 +6,10 @@ import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard
 import {indexToCoord, coordToIndex} from "./util"
 import {brushDistanceVecFromCenter, BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
 
-const INTERVAL = 10;
+const INTERVAL = 50;
 const CELLSIZE = 15;
 const gridGap = 1;
+let lastHoverCoord;
 
 const clickCoord = (eX, eY) => {
     const x = Math.floor(eX / (CELLSIZE + gridGap));
@@ -74,14 +75,14 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
                 setBoard(applyBrush(cCoord, board, cols, rows, brush))
             }}
             onMouseMove={(e) => {
-                const cCoord = clickCoord(e.pageX, e.pageY);
-                setHoverBoard(applyBrush(cCoord, seed, cols, rows, brush));
+                lastHoverCoord = clickCoord(e.pageX, e.pageY);
+                setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
 
                 if (e.buttons === 1 || e.buttons === 3) {
                     let currentIndex = clickCoordToIndex(e.pageX, e.pageY, cols);
                     if (currentIndex !== lastMouseDownIndex) {
                         setLastMouseDownIndex(currentIndex);
-                        setBoard(applyBrush(cCoord, board, cols, rows, brush));
+                        setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
                     }
                 }
             }}
@@ -93,7 +94,6 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
 }
 
 function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBrush}) {
-    const [mouse, setMouse] = useState(null);
     const [hoverBoard, setHoverBoard] = useBoard(rows, cols, seed);
     const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
     const [selectedBrush, setSelectedBrush] = useState(defaultBrush);
@@ -112,22 +112,6 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
         }
     }, [isRunning, setIsRunning]);
 
-    const followMouse = useCallback((event) => {
-        setMouse({
-            x: event.clientX,
-            y: event.clientY
-        });
-    }, [setMouse])
-
-    useEffect(() => {
-        document.addEventListener("mousemove", followMouse, false);
-
-        return () => {
-            document.removeEventListener("mousemove", followMouse, false)
-        };
-    }, [followMouse]);
-
-
     useEffect(() => {
         document.addEventListener("keydown", toggleIsRunning, false);
         return () => {
@@ -138,11 +122,9 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
     const memoRotateBrush = useCallback((event) => {
         if (event.code === "KeyR") {
             setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
-            const cCoord = clickCoord(mouse.x, mouse.y);
-
-            setHoverBoard(applyBrush(cCoord, seed, cols, rows, rotateBrush90deg(selectedBrush)));
+            setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, rotateBrush90deg(selectedBrush)));
         }
-    }, [setSelectedBrushWrapper, selectedBrush, mouse]);
+    }, [setSelectedBrushWrapper, selectedBrush, seed, cols, rows, setHoverBoard]);
 
     useEffect(() => {
         document.addEventListener("keydown", memoRotateBrush, false);
@@ -199,7 +181,8 @@ function App() {
     const seed = Array(rows * cols).fill(0);
 
     return (
-        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols} defaultBrush={defaultBrush}/>
+        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols}
+                      defaultBrush={defaultBrush}/>
     );
 }
 
