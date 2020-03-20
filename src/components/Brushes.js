@@ -59,7 +59,22 @@ export const brushes = [
         get distanceVec() {
             return brushDistanceVecFromCenter(this)
         }
+    },
+    {
+        name: "rpentomino",
+        displayName: "R-Pentomino",
+        rows: 3,
+        cols: 3,
+        template: [
+            0, 1, 1,
+            1, 1, 0,
+            0, 1, 0
+        ],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
     }
+
 ];
 
 export const getBrush = (name) => {

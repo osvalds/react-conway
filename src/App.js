@@ -1,4 +1,4 @@
-import React, {useRef, Fragment, useEffect, useState} from 'react';
+import React, {useRef, Fragment, useEffect, useState, useCallback} from 'react';
 import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
@@ -11,7 +11,7 @@ const CELLSIZE = 15;
 const gridGap = 1;
 
 function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush}) {
-    const emptyBoard = Array(rows*cols).fill(0);
+    const emptyBoard = Array(rows * cols).fill(0);
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
     const [hoverBoard, setHoverBoard] = useBoard(rows, cols, emptyBoard);
@@ -101,6 +101,19 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
+    const toggleIsRunning = useCallback((event) => {
+        if (event.keyCode === 32 || event.type === "click") {
+            setIsRunning(!isRunning);
+        }
+    }, [isRunning, setIsRunning]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", toggleIsRunning, false);
+        return () => {
+            document.removeEventListener("keydown", toggleIsRunning, false)
+        };
+    }, [toggleIsRunning]);
+
     return (
         <Fragment>
             <CanvasBoard board={board}
@@ -115,7 +128,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                 <button onClick={advanceBoard}>
                     Neeeext!
                 </button>
-                <button onClick={e => setIsRunning(!isRunning)}>
+                <button onClick={toggleIsRunning}>
                     {isRunning ? "Stop" : "Start"}
                 </button>
                 <button onClick={() => {
