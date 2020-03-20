@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect} from "react";
 import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
 
-export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush}) {
+export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear}) {
 
     const memoBoardReset = useCallback((event) => {
         if (event.code === "KeyE" || event.type === "click") {
@@ -36,6 +36,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
         <div className="controls">
             <button
                 className="button"
+                onTouchStart={touchHoverClear}
                 onClick={() => {
                     setIsRunning(false);
                     advanceBoard()
@@ -44,12 +45,14 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
             </button>
             <button
                 className="button"
+                onTouchStart={touchHoverClear}
                 onClick={toggleIsRunning}>
                 {isRunning ? "Stop " : "Start "}
                 <span className="button__shortcut">[space]</span>
             </button>
             <button
                 className="button"
+                onTouchStart={touchHoverClear}
                 onClick={memoBoardReset}>
                 Reset
                 <span className="button__shortcut">[<span className="shift">⇧</span>+e]</span>

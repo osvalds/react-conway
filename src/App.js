@@ -69,16 +69,13 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             ref={canvasRef}
             width={windowSize.width}
             height={windowSize.height}
-            // onBlur={() => {
-            //     console.log("blur")
-            //     setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, getBrush("blank")));
-            // }}
             onClick={e => {
                 const index = clickCoordToIndex(e.pageX, e.pageY, cols);
                 const cCoord = clickCoord(e.pageX, e.pageY);
                 setLastMouseDownIndex(index);
                 setBoard(applyBrush(cCoord, board, cols, rows, brush))
             }}
+            onMouseLeave={() => setHoverBoard(seed)}
             onTouchMove={(e) => {
                 lastHoverCoord = clickCoord(e.touches[0].pageX, e.touches[0].pageY);
                 setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
@@ -126,6 +123,10 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
         }
     }, [isRunning, setIsRunning]);
 
+    const touchHoverClear = useCallback(() => {
+        setHoverBoard(seed);
+    }, [setHoverBoard, seed]);
+
     useEffect(() => {
         document.addEventListener("keydown", toggleIsRunning, false);
         return () => {
@@ -167,6 +168,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                       setIsRunning={setIsRunning}
                       setBoard={setBoard}
                       board={board}
+                      touchHoverClear={touchHoverClear}
                       setSelectedBrushWrapper={setSelectedBrushWrapper}
                       selectedBrush={selectedBrush}/>
         </Fragment>
