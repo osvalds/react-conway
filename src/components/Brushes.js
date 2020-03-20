@@ -50,10 +50,9 @@ export const brushes = [
     {
         name: "diehard",
         displayName: "Die Hard",
-        rows: 3,
+        rows: 2,
         cols: 8,
         template: [
-            0, 0, 0, 0, 0, 0, 0, 0,
             1, 1, 0, 0, 0, 0, 1, 0,
             0, 1, 0, 0, 0, 1, 1, 1,
         ],

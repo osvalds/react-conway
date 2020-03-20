@@ -63,14 +63,15 @@ export const applyBrush = ({x, y}, board, bCols, bRows, brush) => {
     let nBoard = [...board];
 
     for (let i = 0, l = brushDistanceVec.length; i < l; i++) {
-        const [xd, yd] = brushDistanceVec[i];
+        if (brush.template[i] === 1) {
+            const [xd, yd] = brushDistanceVec[i];
 
-        const boardIndex = coordToIndex({
-            x: calcNeighborCoordinate(x, xd, bCols),
-            y: calcNeighborCoordinate(y, yd, bRows)
-        }, bCols);
-
-        nBoard[boardIndex] = brush.template[i];
+            const boardIndex = coordToIndex({
+                x: calcNeighborCoordinate(x, xd, bCols),
+                y: calcNeighborCoordinate(y, yd, bRows)
+            }, bCols);
+            nBoard[boardIndex] = brush.template[i];
+        }
     }
 
     return nBoard;

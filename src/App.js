@@ -11,19 +11,27 @@ const CELLSIZE = 15;
 const gridGap = 1;
 
 function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush}) {
+    const emptyBoard = Array(rows*cols).fill(0);
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
+    const [hoverBoard, setHoverBoard] = useBoard(rows, cols, emptyBoard);
 
-    const clearCanvas = (canvas) => {
-        const ctx = canvas.current.getContext("2d");
+    const clearCanvas = (ctx) => {
         ctx.clearRect(0, 0, windowSize.width, windowSize.height);
     };
 
-    const drawCell = (canvas, cell, index, cols) => {
-        const ctx = canvas.current.getContext("2d");
+    const drawCell = (ctx, cell, index, cols) => {
         const {x, y} = indexToCoord(index, cols);
         ctx.fillStyle = cell === 1 ? "#00adb5" : "#393e46";
         ctx.fillRect(x * CELLSIZE + x, y * CELLSIZE + y, CELLSIZE, CELLSIZE)
+    };
+
+    const drawHoverCell = (ctx, cell, index, cols) => {
+        if (cell === 1) {
+            const {x, y} = indexToCoord(index, cols);
+            ctx.fillStyle = "rgba(238, 238, 238, 0.3)";
+            ctx.fillRect(x * CELLSIZE + x, y * CELLSIZE + y, CELLSIZE, CELLSIZE)
+        }
     };
 
     useEffect(() => {
@@ -38,9 +46,11 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     });
 
     useEffect(() => {
-        clearCanvas(canvasRef);
+        const ctx = canvasRef.current.getContext("2d");
+        clearCanvas(ctx);
         for (let i = 0, boardLength = board.length; i < boardLength; i++) {
-            drawCell(canvasRef, board[i], i, cols)
+            drawCell(ctx, board[i], i, cols)
+            drawHoverCell(ctx, hoverBoard[i], i, cols)
         }
     });
 
@@ -66,12 +76,14 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
                 setBoard(applyBrush(cCoord, board, cols, rows, brush))
             }}
             onMouseMove={(e) => {
+                const cCoord = clickCoord(e.pageX, e.pageY);
+                setHoverBoard(applyBrush(cCoord, emptyBoard, cols, rows, brush))
+
                 if (e.buttons === 1 || e.buttons === 3) {
                     let currentIndex = clickCoordToIndex(e.pageX, e.pageY, cols);
                     if (currentIndex !== lastMouseDownIndex) {
-                        const cCoord = clickCoord(e.pageX, e.pageY);
                         setLastMouseDownIndex(currentIndex);
-                        setBoard(applyBrush(cCoord, board, cols, rows, brush))
+                        setBoard(applyBrush(cCoord, board, cols, rows, brush));
                     }
                 }
             }}
