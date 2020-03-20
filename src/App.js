@@ -74,6 +74,15 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
                 setLastMouseDownIndex(index);
                 setBoard(applyBrush(cCoord, board, cols, rows, brush))
             }}
+            onTouchMove={(e) => {
+                lastHoverCoord = clickCoord(e.touches[0].pageX, e.touches[0].pageY);
+                setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
+                let currentIndex = clickCoordToIndex(e.touches[0].pageX, e.touches[0].pageY, cols);
+                if (currentIndex !== lastMouseDownIndex) {
+                    setLastMouseDownIndex(currentIndex);
+                    setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
+                }
+            }}
             onMouseMove={(e) => {
                 lastHoverCoord = clickCoord(e.pageX, e.pageY);
                 setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
