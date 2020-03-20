@@ -23,7 +23,7 @@
   overflow: hidden;
   z-index: 0;
   transition: .2s linear;
-
+  user-select: none;
   margin-bottom: 8px;
 
   &:hover, &:focus, &:active {
