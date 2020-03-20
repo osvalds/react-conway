@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/react-conway/static/css/main.90fc98e9.chunk.css",
+    "main.css": "/react-conway/static/css/main.64207730.chunk.css",
     "main.js": "/react-conway/static/js/main.6f02f909.chunk.js",
     "main.js.map": "/react-conway/static/js/main.6f02f909.chunk.js.map",
     "runtime-main.js": "/react-conway/static/js/runtime-main.9d00aa68.js",
@@ -8,15 +8,15 @@
     "static/js/2.5a885246.chunk.js": "/react-conway/static/js/2.5a885246.chunk.js",
     "static/js/2.5a885246.chunk.js.map": "/react-conway/static/js/2.5a885246.chunk.js.map",
     "index.html": "/react-conway/index.html",
-    "precache-manifest.bc7b43e5f65585bec3ba0afefcb0829d.js": "/react-conway/precache-manifest.bc7b43e5f65585bec3ba0afefcb0829d.js",
+    "precache-manifest.0e92c6c4b213e3e2e9ff3870a4d78356.js": "/react-conway/precache-manifest.0e92c6c4b213e3e2e9ff3870a4d78356.js",
     "service-worker.js": "/react-conway/service-worker.js",
-    "static/css/main.90fc98e9.chunk.css.map": "/react-conway/static/css/main.90fc98e9.chunk.css.map",
+    "static/css/main.64207730.chunk.css.map": "/react-conway/static/css/main.64207730.chunk.css.map",
     "static/js/2.5a885246.chunk.js.LICENSE.txt": "/react-conway/static/js/2.5a885246.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.9d00aa68.js",
     "static/js/2.5a885246.chunk.js",
-    "static/css/main.90fc98e9.chunk.css",
+    "static/css/main.64207730.chunk.css",
     "static/js/main.6f02f909.chunk.js"
   ]
 }
