@@ -8,6 +8,7 @@ import {indexToCoord, coordToIndex} from "./util"
 const INTERVAL = 50;
 const CELLSIZE = 15;
 const gridGap = 1;
+const brushes = [{name: "pixel"}, "rpentomino"]
 
 function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCols, setRows}) {
     const canvasRef = useRef(null);
@@ -87,7 +88,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                          setCols={setCols}
                          setRows={setRows}
                          rows={rows}/>
-            <div className="board__controls">
+            <div className="controls">
                 <button onClick={advanceBoard}>
                     Neeeext!
                 </button>
