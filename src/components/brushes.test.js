@@ -1,4 +1,4 @@
-import {centerCoord, brushDistanceVecFromCenter} from "./Brushes";
+import {centerCoord, brushDistanceVecFromCenter, rotateTemplate90deg} from "./Brushes";
 
 it("returns center coordinates of a brush", () => {
     const brush1x1 = {
@@ -104,4 +104,62 @@ it("converts array into diff array calculating distance from the center", () => 
     expect(brushDistanceVecFromCenter(brush3x3)).toStrictEqual(brush3x3DistanceVecs);
     expect(brushDistanceVecFromCenter(brush3x1)).toStrictEqual(brush3x1DistanceVecs);
     expect(brushDistanceVecFromCenter(brush3x8)).toStrictEqual(brush3x8DistanceVecs);
+});
+
+it("converts array into diff array calculating distance from the center", () => {
+
+    const template3x3 = {
+        rows: 3,
+        cols: 3,
+        template: [
+            0, 1, 0,
+            0, 0, 1,
+            1, 1, 1
+        ]
+    };
+
+    const template3x3Rotated = {
+        rows: 3,
+        cols: 3,
+        template: [
+            0, 1, 1,
+            1, 0, 1,
+            0, 0, 1
+        ]
+    };
+
+    const template3x1 = {
+        rows: 1,
+        cols: 3,
+        template: [1, 0, 1]
+    };
+
+    const template3x1Rotated = {
+        rows: 3,
+        cols: 1,
+        template: [1, 0, 1]
+    };
+
+    const template2x3 = {
+        rows: 3,
+        cols: 2,
+        template: [
+            0, 1,
+            0, 0,
+            1, 1,
+        ]
+    };
+
+    const template2x3Rotated = {
+        rows: 2,
+        cols: 3,
+        template: [
+            1, 0, 1,
+            0, 0, 1,
+        ]
+    };
+
+    expect(rotateTemplate90deg(template3x3)).toStrictEqual(template3x3Rotated);
+    expect(rotateTemplate90deg(template3x1)).toStrictEqual(template3x1Rotated);
+    expect(rotateTemplate90deg(template2x3)).toStrictEqual(template2x3Rotated);
 });

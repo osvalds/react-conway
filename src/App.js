@@ -4,17 +4,21 @@ import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
 import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
-import {BrushSelector, getBrush} from "./components/Brushes";
+import {BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
 
 const INTERVAL = 50;
 const CELLSIZE = 15;
 const gridGap = 1;
 
-function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush}) {
-    const emptyBoard = Array(rows * cols).fill(0);
+const clickCoord = (eX, eY) => {
+    const x = Math.floor(eX / (CELLSIZE + gridGap));
+    const y = Math.floor(eY / (CELLSIZE + gridGap));
+    return {x, y};
+};
+
+function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
-    const [hoverBoard, setHoverBoard] = useBoard(rows, cols, emptyBoard);
 
     const clearCanvas = (ctx) => {
         ctx.clearRect(0, 0, windowSize.width, windowSize.height);
@@ -38,7 +42,6 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     useEffect(() => {
         const newRows = Math.floor((windowSize.height + gridGap) / (CELLSIZE + gridGap));
         const newCols = Math.floor((windowSize.width + gridGap) / (CELLSIZE + gridGap));
-
         if (cols !== newCols || rows !== newRows) {
             setBoard(handleBoardDimensionChange(board, cols, rows, newCols, newRows));
             setRows(newRows);
@@ -54,12 +57,6 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             drawHoverCell(ctx, hoverBoard[i], i, cols)
         }
     });
-
-    const clickCoord = (eX, eY) => {
-        const x = Math.floor(eX / (CELLSIZE + gridGap));
-        const y = Math.floor(eY / (CELLSIZE + gridGap));
-        return {x, y};
-    };
 
     const clickCoordToIndex = (eX, eY, cols) => {
         return coordToIndex(clickCoord(eX, eY, cols), cols)
@@ -78,7 +75,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             }}
             onMouseMove={(e) => {
                 const cCoord = clickCoord(e.pageX, e.pageY);
-                setHoverBoard(applyBrush(cCoord, emptyBoard, cols, rows, brush))
+                setHoverBoard(applyBrush(cCoord, seed, cols, rows, brush));
 
                 if (e.buttons === 1 || e.buttons === 3) {
                     let currentIndex = clickCoordToIndex(e.pageX, e.pageY, cols);
@@ -96,7 +93,8 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
 }
 
 function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
-
+    const [mouse, setMouse] = useState(null);
+    const [hoverBoard, setHoverBoard] = useBoard(rows, cols, seed);
     const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
     const [selectedBrush, setSelectedBrush] = useState(getBrush("glider"));
 
@@ -108,12 +106,43 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
         }
     }, [isRunning, setIsRunning]);
 
+    const followMouse = useCallback((event) => {
+        setMouse({
+            x: event.clientX,
+            y: event.clientY
+        });
+    }, [setMouse])
+
+    useEffect(() => {
+        document.addEventListener("mousemove", followMouse, false);
+
+        return () => {
+            document.removeEventListener("mousemove", followMouse, false)
+        };
+    }, [followMouse]);
+
+
     useEffect(() => {
         document.addEventListener("keydown", toggleIsRunning, false);
         return () => {
             document.removeEventListener("keydown", toggleIsRunning, false)
         };
     }, [toggleIsRunning]);
+
+    const memoRotateBrush = useCallback((event) => {
+        if (event.code === "KeyR") {
+            setSelectedBrush(rotateBrush90deg(selectedBrush))
+            const cCoord = clickCoord(mouse.x, mouse.y);
+            setHoverBoard(applyBrush(cCoord, seed, cols, rows, rotateBrush90deg(selectedBrush)));
+        }
+    }, [setSelectedBrush, selectedBrush, mouse]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", memoRotateBrush, false);
+        return () => {
+            document.removeEventListener("keydown", memoRotateBrush, false)
+        };
+    }, [memoRotateBrush]);
 
     return (
         <Fragment>
@@ -124,7 +153,11 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                          cols={cols}
                          setCols={setCols}
                          setRows={setRows}
-                         rows={rows}/>
+                         rows={rows}
+                         seed={seed}
+                         setHoverBoard={setHoverBoard}
+                         hoverBoard={hoverBoard}
+            />
             <div className="controls">
                 <button onClick={advanceBoard}>
                     Neeeext!
@@ -140,6 +173,11 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                 </button>
                 <BrushSelector onChange={e => setSelectedBrush(getBrush((e.target.value)))}
                                selectedBrush={selectedBrush}/>
+                <button onClick={() => {
+                    setSelectedBrush(rotateBrush90deg(selectedBrush))
+                }}>
+                    Rotate 90deg (shift + r)
+                </button>
             </div>
         </Fragment>
     )
