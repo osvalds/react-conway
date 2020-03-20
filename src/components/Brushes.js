@@ -73,8 +73,39 @@ export const brushes = [
         get distanceVec() {
             return brushDistanceVecFromCenter(this)
         }
+    },
+    {
+        name: "mwss",
+        displayName: "Middle weight space ship",
+        rows: 5,
+        cols: 6,
+        template: [
+            0, 0, 0, 1, 0, 0,
+            0, 1, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 0,
+        ],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
+    },
+    {
+        name: "hwss",
+        displayName: "Heavy weight space ship",
+        rows: 5,
+        cols: 7,
+        template: [
+            0, 0, 0, 1, 1, 0, 0,
+            0, 1, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 0,
+        ],
+        get distanceVec() {
+            return brushDistanceVecFromCenter(this)
+        }
     }
-
 ];
 
 export const getBrush = (name) => {
