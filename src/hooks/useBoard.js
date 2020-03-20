@@ -97,12 +97,6 @@ export default function useBoard(rows, cols, seed) {
     const [board, setBoard] = useState(seed);
     const [isRunning, setIsRunning] = useState(false);
 
-    let toggleCell = (clickedIndex) => {
-        let newBoard = [...board];
-        newBoard[clickedIndex] = board[clickedIndex] === 0 ? 1 : 0;
-        setBoard(newBoard);
-    };
-
     const advanceBoard = () => {
         let newBoard = [...board];
 
@@ -128,5 +122,5 @@ export default function useBoard(rows, cols, seed) {
         }
     };
 
-    return [board, setBoard, isRunning, setIsRunning, toggleCell, advanceBoard]
+    return [board, setBoard, isRunning, setIsRunning, advanceBoard]
 }

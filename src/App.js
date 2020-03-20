@@ -2,14 +2,15 @@ import React, {useRef, Fragment, useEffect, useState} from 'react';
 import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
-import useBoard, {handleBoardDimensionChange} from "./hooks/useBoard";
+import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
+import {BrushSelector, getBrush} from "./components/Brushes";
 
 const INTERVAL = 50;
 const CELLSIZE = 15;
 const gridGap = 1;
 
-function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCols, setRows}) {
+function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
 
@@ -43,10 +44,14 @@ function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCo
         }
     });
 
+    const clickCoord = (eX, eY) => {
+        const x = Math.floor(eX / (CELLSIZE + gridGap));
+        const y = Math.floor(eY / (CELLSIZE + gridGap));
+        return {x, y};
+    };
+
     const clickCoordToIndex = (eX, eY, cols) => {
-        const cX = Math.floor(eX / (CELLSIZE + gridGap));
-        const cY = Math.floor(eY / (CELLSIZE + gridGap));
-        return coordToIndex({x: cX, y: cY}, cols)
+        return coordToIndex(clickCoord(eX, eY, cols), cols)
     };
 
     return (
@@ -54,17 +59,19 @@ function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCo
             ref={canvasRef}
             width={windowSize.width}
             height={windowSize.height}
-            onMouseDown={e => {
-                const index = clickCoordToIndex(e.pageX, e.pageY, cols)
+            onClick={e => {
+                const index = clickCoordToIndex(e.pageX, e.pageY, cols);
+                const cCoord = clickCoord(e.pageX, e.pageY);
                 setLastMouseDownIndex(index);
-                toggleCell(index);
+                setBoard(applyBrush(cCoord, board, cols, rows, brush))
             }}
             onMouseMove={(e) => {
                 if (e.buttons === 1 || e.buttons === 3) {
                     let currentIndex = clickCoordToIndex(e.pageX, e.pageY, cols);
                     if (currentIndex !== lastMouseDownIndex) {
+                        const cCoord = clickCoord(e.pageX, e.pageY);
                         setLastMouseDownIndex(currentIndex);
-                        toggleCell(currentIndex)
+                        setBoard(applyBrush(cCoord, board, cols, rows, brush))
                     }
                 }
             }}
@@ -77,13 +84,18 @@ function CanvasBoard({board, toggleCell, windowSize, cols, rows, setBoard, setCo
 
 function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
-    const [board, setBoard, isRunning, setIsRunning, toggleCell, advanceBoard] = useBoard(rows, cols, seed);
+    const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
+    const [selectedBrush, setSelectedBrush] = useState(getBrush("glider"));
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
     return (
         <Fragment>
-            <CanvasBoard board={board} setBoard={setBoard} toggleCell={toggleCell} windowSize={windowSize} cols={cols}
+            <CanvasBoard board={board}
+                         brush={selectedBrush}
+                         setBoard={setBoard}
+                         windowSize={windowSize}
+                         cols={cols}
                          setCols={setCols}
                          setRows={setRows}
                          rows={rows}/>
@@ -100,6 +112,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                 }}>
                     Reset
                 </button>
+                <BrushSelector onChange={e => setSelectedBrush(getBrush((e.target.value)))}
+                               selectedBrush={selectedBrush}/>
             </div>
         </Fragment>
     )

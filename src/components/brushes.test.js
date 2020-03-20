@@ -1,4 +1,4 @@
-import {centerCoord, brushDistanceVecFromCenter} from "./brushes";
+import {centerCoord, brushDistanceVecFromCenter} from "./Brushes";
 
 it("returns center coordinates of a brush", () => {
     const brush1x1 = {

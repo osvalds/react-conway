@@ -1,5 +1,5 @@
 import {addCols, removeCols, addRows, removeRows, handleBoardDimensionChange, applyBrush} from "./useBoard";
-import {getBrush} from "../components/brushes"
+import {getBrush} from "../components/Brushes"
 
 it("adds 1 empty col to existing board", () => {
     const board = [

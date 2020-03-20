@@ -1,3 +1,4 @@
+import React, {useState} from "react";
 import {indexToCoord} from "../util";
 
 
@@ -24,6 +25,7 @@ export const brushDistanceVecFromCenter = ({rows, cols, template}) => {
 export const brushes = [
     {
         name: "pixel",
+        displayName: "Pixel",
         rows: 1,
         cols: 1,
         template: [1],
@@ -33,6 +35,7 @@ export const brushes = [
     },
     {
         name: "glider",
+        displayName: "Glider",
         rows: 3,
         cols: 3,
         template: [
@@ -46,6 +49,7 @@ export const brushes = [
     },
     {
         name: "diehard",
+        displayName: "Die Hard",
         rows: 3,
         cols: 8,
         template: [
@@ -62,3 +66,19 @@ export const brushes = [
 export const getBrush = (name) => {
     return brushes.filter(brush => brush.name === name)[0];
 };
+
+export function BrushSelector({onChange, selectedBrush}) {
+
+
+    return (
+        <select value={selectedBrush.name} onChange={onChange}>
+            {brushes.map(brush => {
+                return (
+                    <option key={brush.name} value={brush.name}>
+                        {brush.displayName}
+                    </option>
+                )
+            })}
+        </select>
+    )
+}
