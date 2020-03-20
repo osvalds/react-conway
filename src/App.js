@@ -27,6 +27,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     };
 
     const drawHoverCell = (ctx, cell, index, cols) => {
+        // draws only the alive cell in the template
         if (cell === 1) {
             const {x, y} = indexToCoord(index, cols);
             ctx.fillStyle = "rgba(238, 238, 238, 0.3)";

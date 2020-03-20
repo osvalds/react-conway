@@ -63,6 +63,8 @@ export const applyBrush = ({x, y}, board, bCols, bRows, brush) => {
     let nBoard = [...board];
 
     for (let i = 0, l = brushDistanceVec.length; i < l; i++) {
+        // Only apply the alive cells to the board. This will let put
+        // irregular brushes closer together (like the glider)
         if (brush.template[i] === 1) {
             const [xd, yd] = brushDistanceVec[i];
 
