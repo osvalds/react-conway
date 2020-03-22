@@ -1,14 +1,15 @@
 import React, {useCallback, useEffect} from "react";
 import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
 
-export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear}) {
+export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices}) {
 
     const memoBoardReset = useCallback((event) => {
         if (event.code === "KeyE" || event.type === "click") {
             setIsRunning(false);
             setBoard([...board].fill(0))
+            setLastPaintedIndices(new Set())
         }
-    }, [setIsRunning, setBoard, board]);
+    }, [setIsRunning, setBoard, board, setLastPaintedIndices]);
 
     useEffect(() => {
         document.addEventListener("keydown", memoBoardReset, false);

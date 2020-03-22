@@ -59,7 +59,6 @@ export const handleBoardDimensionChange = (board, cCols, cRows, nCols, nRows) =>
 export const applyBrush = ({x, y}, board, bCols, bRows, brush) => {
     // cache the distance vector
     const brushDistanceVec = brush.distanceVec;
-
     let nBoard = [...board];
 
     for (let i = 0, l = brushDistanceVec.length; i < l; i++) {
@@ -78,6 +77,34 @@ export const applyBrush = ({x, y}, board, bCols, bRows, brush) => {
 
     return nBoard;
 };
+
+export const getBoardWithAppliedBrushAndPaintedIndices = ({x, y}, board, bCols, bRows, brush) => {
+
+    const brushDistanceVec = brush.distanceVec;
+    let nBoard = [...board];
+    let paintedIndices = new Set();
+
+    for (let i = 0, l = brushDistanceVec.length; i < l; i++) {
+        // Only apply the alive cells to the board. This will let put
+        // irregular brushes closer together (like the glider)
+        if (brush.template[i] === 1) {
+            const [xd, yd] = brushDistanceVec[i];
+
+            const boardIndex = coordToIndex({
+                x: calcNeighborCoordinate(x, xd, bCols),
+                y: calcNeighborCoordinate(y, yd, bRows)
+            }, bCols);
+            nBoard[boardIndex] = brush.template[i];
+
+            paintedIndices.add(boardIndex);
+        }
+    }
+
+    return {
+        nBoard, paintedIndices
+    };
+};
+
 
 const countNeighbors = ({x, y}, board, COLS, ROWS) => {
     // hard coded for perf reasons

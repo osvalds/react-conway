@@ -2,9 +2,13 @@ import React, {useRef, Fragment, useEffect, useState, useCallback} from 'react';
 import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
-import useBoard, {applyBrush, handleBoardDimensionChange} from "./hooks/useBoard";
+import useBoard, {
+    applyBrush,
+    getBoardWithAppliedBrushAndPaintedIndices,
+    handleBoardDimensionChange
+} from "./hooks/useBoard";
 import {indexToCoord, coordToIndex} from "./util"
-import {brushDistanceVecFromCenter, BrushSelector, getBrush, rotateBrush90deg} from "./components/Brushes";
+import {brushDistanceVecFromCenter, getBrush, rotateBrush90deg} from "./components/Brushes";
 import Controls from "./components/Controls";
 
 const INTERVAL = 50;
@@ -12,13 +16,23 @@ const CELLSIZE = 15;
 const gridGap = 1;
 let lastHoverCoord;
 
-const clickCoord = (eX, eY) => {
+const mousePosToCoord = (eX, eY) => {
     const x = Math.floor(eX / (CELLSIZE + gridGap));
     const y = Math.floor(eY / (CELLSIZE + gridGap));
     return {x, y};
 };
 
-function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed}) {
+const intersection = (setA, setB) => {
+    let _intersection = new Set()
+    for (let elem of setB) {
+        if (setA.has(elem)) {
+            _intersection.add(elem)
+        }
+    }
+    return _intersection
+};
+
+function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed, lastPaintedHoverIndices, lastPaintedIndices, setLastPaintedHoverIndices, setLastPaintedIndices}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
 
@@ -34,9 +48,10 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
 
     const drawHoverCell = (ctx, cell, index, cols) => {
         // draws only the alive cell in the template
-        if (cell === 1) {
+        // paints the cell only if it has beeb set to be hovered
+        if (cell === 1 && lastPaintedHoverIndices.has(index)) {
             const {x, y} = indexToCoord(index, cols);
-            ctx.fillStyle = "rgba(238, 238, 238, 0.3)";
+            ctx.fillStyle = lastPaintedIndices.has(index) ? "rgb(200,87,125)" : "rgba(238, 238, 238, 0.3)";
             ctx.fillRect(x * CELLSIZE + x, y * CELLSIZE + y, CELLSIZE, CELLSIZE)
         }
     };
@@ -55,13 +70,13 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
         const ctx = canvasRef.current.getContext("2d");
         clearCanvas(ctx);
         for (let i = 0, boardLength = board.length; i < boardLength; i++) {
-            drawCell(ctx, board[i], i, cols)
+            drawCell(ctx, board[i], i, cols);
             drawHoverCell(ctx, hoverBoard[i], i, cols)
         }
     });
 
-    const clickCoordToIndex = (eX, eY, cols) => {
-        return coordToIndex(clickCoord(eX, eY, cols), cols)
+    const mouseToIndex = (eX, eY, cols) => {
+        return coordToIndex(mousePosToCoord(eX, eY, cols), cols)
     };
 
     return (
@@ -70,35 +85,39 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             width={windowSize.width}
             height={windowSize.height}
             onClick={e => {
-                const index = clickCoordToIndex(e.pageX, e.pageY, cols);
-                const cCoord = clickCoord(e.pageX, e.pageY);
-                setLastMouseDownIndex(index);
-                setBoard(applyBrush(cCoord, board, cols, rows, brush))
+                if (intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                    const cCoord = mousePosToCoord(e.pageX, e.pageY);
+                    const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(cCoord, board, cols, rows, brush)
+
+                    setLastPaintedIndices(paintedIndices);
+                    setBoard(nBoard)
+                }
             }}
             onMouseLeave={() => setHoverBoard(seed)}
             onTouchMove={(e) => {
-                lastHoverCoord = clickCoord(e.touches[0].pageX, e.touches[0].pageY);
-                setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
-                let currentIndex = clickCoordToIndex(e.touches[0].pageX, e.touches[0].pageY, cols);
-                if (currentIndex !== lastMouseDownIndex) {
-                    setLastMouseDownIndex(currentIndex);
-                    setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
-                }
+                // lastHoverCoord = mousePosToCoord(e.touches[0].pageX, e.touches[0].pageY);
+                // setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
+                // let currentIndex = mouseToIndex(e.touches[0].pageX, e.touches[0].pageY, cols);
+                // if (currentIndex !== lastMouseDownIndex) {
+                //     setLastMouseDownIndex(currentIndex);
+                //     setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
+                // }
             }}
             onMouseMove={(e) => {
-                lastHoverCoord = clickCoord(e.pageX, e.pageY);
-                setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
+                console.log("mosuemove", e.detail)
+                lastHoverCoord = mousePosToCoord(e.pageX, e.pageY);
+
+                const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush);
+                setLastPaintedHoverIndices(paintedIndices);
+                setHoverBoard(nBoard);
 
                 if (e.buttons === 1 || e.buttons === 3) {
-                    let currentIndex = clickCoordToIndex(e.pageX, e.pageY, cols);
-                    if (currentIndex !== lastMouseDownIndex) {
-                        setLastMouseDownIndex(currentIndex);
-                        setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
+                    if (intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                        const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush)
+                        setLastPaintedIndices(paintedIndices);
+                        setBoard(nBoard)
                     }
                 }
-            }}
-            onMouseUp={e => {
-                setLastMouseDownIndex(null)
             }}
         />
     );
@@ -108,6 +127,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
     const [hoverBoard, setHoverBoard] = useBoard(rows, cols, seed);
     const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
     const [selectedBrush, setSelectedBrush] = useState(defaultBrush);
+    const [lastPaintedIndices, setLastPaintedIndices] = useState(new Set());
+    const [lastPaintedHoverIndices, setLastPaintedHoverIndices] = useState(new Set());
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
@@ -136,8 +157,10 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
 
     const memoRotateBrush = useCallback((event) => {
         if (event.code === "KeyR") {
-            setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
-            setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, rotateBrush90deg(selectedBrush)));
+            setSelectedBrushWrapper(rotateBrush90deg(selectedBrush));
+            const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, seed, cols, rows, rotateBrush90deg(selectedBrush));
+            setLastPaintedHoverIndices(paintedIndices);
+            setHoverBoard(nBoard);
         }
     }, [setSelectedBrushWrapper, selectedBrush, seed, cols, rows, setHoverBoard]);
 
@@ -161,6 +184,10 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                          seed={seed}
                          setHoverBoard={setHoverBoard}
                          hoverBoard={hoverBoard}
+                         lastPaintedIndices={lastPaintedIndices}
+                         setLastPaintedIndices={setLastPaintedIndices}
+                         lastPaintedHoverIndices={lastPaintedHoverIndices}
+                         setLastPaintedHoverIndices={setLastPaintedHoverIndices}
             />
             <Controls advanceBoard={advanceBoard}
                       toggleIsRunning={toggleIsRunning}
@@ -170,7 +197,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                       board={board}
                       touchHoverClear={touchHoverClear}
                       setSelectedBrushWrapper={setSelectedBrushWrapper}
-                      selectedBrush={selectedBrush}/>
+                      selectedBrush={selectedBrush}
+                      setLastPaintedIndices={setLastPaintedIndices}/>
         </Fragment>
     )
 }
