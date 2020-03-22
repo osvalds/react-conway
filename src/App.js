@@ -32,9 +32,8 @@ const intersection = (setA, setB) => {
     return _intersection
 };
 
-function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed, lastPaintedHoverIndices, lastPaintedIndices, setLastPaintedHoverIndices, setLastPaintedIndices}) {
+function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed, lastPaintedHoverIndices, lastPaintedIndices, setLastPaintedHoverIndices, setLastPaintedIndices, isRunning}) {
     const canvasRef = useRef(null);
-    const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
 
     const clearCanvas = (ctx) => {
         ctx.clearRect(0, 0, windowSize.width, windowSize.height);
@@ -49,7 +48,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     const drawHoverCell = (ctx, cell, index, cols) => {
         // draws only the alive cell in the template
         // paints the cell only if it has beeb set to be hovered
-        if (cell === 1 && lastPaintedHoverIndices.has(index)) {
+        if (cell === 1 && (isRunning || lastPaintedHoverIndices.has(index))) {
             const {x, y} = indexToCoord(index, cols);
             ctx.fillStyle = lastPaintedIndices.has(index) ? "rgb(200,87,125)" : "rgba(238, 238, 238, 0.3)";
             ctx.fillRect(x * CELLSIZE + x, y * CELLSIZE + y, CELLSIZE, CELLSIZE)
@@ -75,46 +74,82 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
         }
     });
 
-    const mouseToIndex = (eX, eY, cols) => {
-        return coordToIndex(mousePosToCoord(eX, eY, cols), cols)
-    };
-
     return (
         <canvas
             ref={canvasRef}
             width={windowSize.width}
             height={windowSize.height}
             onClick={e => {
-                if (intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                if (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
                     const cCoord = mousePosToCoord(e.pageX, e.pageY);
                     const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(cCoord, board, cols, rows, brush)
 
-                    setLastPaintedIndices(paintedIndices);
+                    if (isRunning) {
+                        setLastPaintedIndices(new Set());
+                    } else {
+                        setLastPaintedIndices(paintedIndices);
+                    }
                     setBoard(nBoard)
                 }
             }}
             onMouseLeave={() => setHoverBoard(seed)}
+            onTouchEnd={e => {
+                lastHoverCoord = mousePosToCoord(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+                if (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                    const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush)
+                    if (isRunning) {
+                        setLastPaintedIndices(new Set());
+                    } else {
+                        setLastPaintedIndices(paintedIndices);
+                    }
+                    setBoard(nBoard)
+                }
+                setHoverBoard(seed);
+                e.preventDefault()
+            }}
             onTouchMove={(e) => {
-                // lastHoverCoord = mousePosToCoord(e.touches[0].pageX, e.touches[0].pageY);
-                // setHoverBoard(applyBrush(lastHoverCoord, seed, cols, rows, brush));
-                // let currentIndex = mouseToIndex(e.touches[0].pageX, e.touches[0].pageY, cols);
-                // if (currentIndex !== lastMouseDownIndex) {
-                //     setLastMouseDownIndex(currentIndex);
-                //     setBoard(applyBrush(lastHoverCoord, board, cols, rows, brush));
-                // }
+                lastHoverCoord = mousePosToCoord(e.touches[0].clientX, e.touches[0].clientY);
+                const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, seed, cols, rows, brush);
+                setLastPaintedHoverIndices(paintedIndices);
+                if (isRunning) {
+                    setLastPaintedHoverIndices(new Set());
+                } else {
+                    setLastPaintedHoverIndices(paintedIndices);
+                }
+                setHoverBoard(nBoard);
+                // allow dragging and placing smaller brushes like gliders and pixels
+                if ((brush.template.length < 17 &&
+                    (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0))) {
+                    const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush)
+                    if (isRunning) {
+                        setLastPaintedIndices(new Set());
+                    } else {
+                        setLastPaintedIndices(paintedIndices);
+                    }
+                    setBoard(nBoard)
+                }
             }}
             onMouseMove={(e) => {
-                console.log("mosuemove", e.detail)
                 lastHoverCoord = mousePosToCoord(e.pageX, e.pageY);
 
-                const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush);
-                setLastPaintedHoverIndices(paintedIndices);
+                const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, seed, cols, rows, brush);
+
+                if (isRunning) {
+                    setLastPaintedHoverIndices(new Set());
+                } else {
+                    setLastPaintedHoverIndices(paintedIndices);
+                }
                 setHoverBoard(nBoard);
 
                 if (e.buttons === 1 || e.buttons === 3) {
-                    if (intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
-                        const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush)
-                        setLastPaintedIndices(paintedIndices);
+                    if (isRunning ||
+                        intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                        const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush);
+                        if (isRunning) {
+                            setLastPaintedIndices(new Set());
+                        } else {
+                            setLastPaintedIndices(paintedIndices);
+                        }
                         setBoard(nBoard)
                     }
                 }
@@ -187,6 +222,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                          lastPaintedIndices={lastPaintedIndices}
                          setLastPaintedIndices={setLastPaintedIndices}
                          lastPaintedHoverIndices={lastPaintedHoverIndices}
+                         isRunning={isRunning}
                          setLastPaintedHoverIndices={setLastPaintedHoverIndices}
             />
             <Controls advanceBoard={advanceBoard}
