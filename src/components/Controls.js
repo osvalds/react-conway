@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect} from "react";
 import {BrushSelector, getBrush, rotateBrush90deg, useBrushes} from "./Brushes";
 
-export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices}) {
-    const [brushes, brushesLoaded] = useBrushes();
+export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices, cols, rows}) {
+    const [brushes, brushesLoaded] = useBrushes(cols, rows);
 
     const memoBoardReset = useCallback((event) => {
         if (event.code === "KeyE" || event.type === "click") {

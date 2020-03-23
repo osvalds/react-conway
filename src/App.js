@@ -232,7 +232,9 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                       touchHoverClear={touchHoverClear}
                       setSelectedBrushWrapper={setSelectedBrushCb}
                       selectedBrush={selectedBrush}
-                      setLastPaintedIndices={setLastPaintedIndices}/>
+                      setLastPaintedIndices={setLastPaintedIndices}
+                      cols={cols}
+                      rows={rows}/>
         </Fragment>
     )
 }
