@@ -58,6 +58,7 @@ const addTemplateToBrush = (brush, patternString, searchIndex) => {
 
     let count = 1,
         in_number = false,
+        currentX = 0,
         chr;
 
     for (let len = patternString.length; searchIndex < len; searchIndex++) {
@@ -74,12 +75,13 @@ const addTemplateToBrush = (brush, patternString, searchIndex) => {
         } else {
             // b
             if (chr === 98) {
-                while (count--) {
-                    template[positionInTemplate] = 0;
-                    positionInTemplate++;
-                }
+                // we can skip all these positions because we have 1D Uint8Array
+                // which is initialised to 0s
+                positionInTemplate += count;
+                currentX += count;
                 // A-Za-z
             } else if ((chr >= 65 && chr <= 90) || (chr >= 97 && chr < 122)) {
+                currentX += count;
                 while (count--) {
                     template[positionInTemplate] = 1;
                     positionInTemplate++;
@@ -87,24 +89,23 @@ const addTemplateToBrush = (brush, patternString, searchIndex) => {
             }
             // $
             else if (chr === 36) {
-                // if we have count and end of line, we will need to add
-                // count-1 empty lines
-                count = (count - 1) * brush.cols;
-                // we don't care about line ends because we
-                // have a 1D brush template
-                while (count--) {
-                    template[positionInTemplate] = 0;
-                    positionInTemplate++;
+                // we havent reached the end of cols, must skip ahead
+                if (currentX < brush.cols) {
+                    positionInTemplate += brush.cols - currentX;
                 }
-            }// !
+                // if we have a count at the end of line, we must skip
+                // couple of "rows"
+                if (count - 1) {
+                    positionInTemplate += (count - 1) * brush.cols
+                }
+                currentX = 0;
+            }
+            // !
             else if (chr === 33) {
-                while (positionInTemplate < totalSize) {
-                    template[positionInTemplate] = 0;
-                    positionInTemplate++;
-                }
                 break;
             }
 
+            // currentX = 0;
             count = 1;
             in_number = false;
         }

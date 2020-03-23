@@ -80,6 +80,7 @@ const brushList = [
     "spider.rle",
     "twogun.rle",
     "wing.rle",
+    "lobster.rle",
 ];
 
 export function useBrushes() {
