@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect} from "react";
-import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
+import {BrushSelector, getBrush, rotateBrush90deg, useBrushes} from "./Brushes";
 
 export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices}) {
+    const [brushes, brushesLoaded] = useBrushes();
 
     const memoBoardReset = useCallback((event) => {
         if (event.code === "KeyE" || event.type === "click") {
@@ -18,13 +19,13 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
         };
     }, [memoBoardReset]);
 
-
     const memoNext = useCallback((event) => {
         if (event.code === "KeyW" || event.type === "click") {
+            setLastPaintedIndices(new Set());
             setIsRunning(false);
             advanceBoard();
         }
-    }, [setIsRunning, advanceBoard]);
+    }, [setIsRunning, advanceBoard, setLastPaintedIndices]);
 
     useEffect(() => {
         document.addEventListener("keydown", memoNext, false);
@@ -66,11 +67,15 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 Rotate 90deg
                 <span className="button__shortcut">[<span className="shift">⇧</span>+r]</span>
             </button>
-            <BrushSelector onChange={e => {
-                setSelectedBrushWrapper(getBrush((e.target.value)))
-                e.target.blur()
-            }}
-                           selectedBrush={selectedBrush}/>
+            <BrushSelector
+                onChange={e => {
+                    setSelectedBrushWrapper(getBrush(e.target.value, brushes))
+                    e.target.blur()
+                }}
+                selectedBrush={selectedBrush}
+                brushesLoaded={brushesLoaded}
+                brushes={brushes}
+            />
             <button
                 className="button button--desktop"
                 onClick={() => {

@@ -3,12 +3,11 @@ import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
 import useBoard, {
-    applyBrush,
     getBoardWithAppliedBrushAndPaintedIndices,
     handleBoardDimensionChange
 } from "./hooks/useBoard";
-import {indexToCoord, coordToIndex} from "./util"
-import {brushDistanceVecFromCenter, getBrush, rotateBrush90deg} from "./components/Brushes";
+import {indexToCoord} from "./util"
+import {defaultBrush, rotateBrush90deg} from "./components/Brushes";
 import Controls from "./components/Controls";
 
 const INTERVAL = 50;
@@ -158,7 +157,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
     );
 }
 
-function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBrush}) {
+function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
     const [hoverBoard, setHoverBoard] = useBoard(rows, cols, seed);
     const [board, setBoard, isRunning, setIsRunning, advanceBoard] = useBoard(rows, cols, seed);
     const [selectedBrush, setSelectedBrush] = useState(defaultBrush);
@@ -167,17 +166,16 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
-    const setSelectedBrushWrapper = useCallback((newBrush) => {
-        //Caches the distance vector, otherwise it is calculated on every render
-        newBrush.distanceVec = brushDistanceVecFromCenter(newBrush);
+    const setSelectedBrushCb = useCallback((newBrush) => {
         setSelectedBrush(newBrush);
     }, [setSelectedBrush]);
 
     const toggleIsRunning = useCallback((event) => {
         if (event.keyCode === 32 || event.type === "click") {
+            setLastPaintedIndices(new Set());
             setIsRunning(!isRunning);
         }
-    }, [isRunning, setIsRunning]);
+    }, [isRunning, setIsRunning, setLastPaintedIndices]);
 
     const touchHoverClear = useCallback(() => {
         setHoverBoard(seed);
@@ -192,12 +190,12 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
 
     const memoRotateBrush = useCallback((event) => {
         if (event.code === "KeyR") {
-            setSelectedBrushWrapper(rotateBrush90deg(selectedBrush));
+            setSelectedBrushCb(rotateBrush90deg(selectedBrush));
             const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, seed, cols, rows, rotateBrush90deg(selectedBrush));
             setLastPaintedHoverIndices(paintedIndices);
             setHoverBoard(nBoard);
         }
-    }, [setSelectedBrushWrapper, selectedBrush, seed, cols, rows, setHoverBoard]);
+    }, [setSelectedBrushCb, selectedBrush, seed, cols, rows, setHoverBoard]);
 
     useEffect(() => {
         document.addEventListener("keydown", memoRotateBrush, false);
@@ -232,7 +230,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
                       setBoard={setBoard}
                       board={board}
                       touchHoverClear={touchHoverClear}
-                      setSelectedBrushWrapper={setSelectedBrushWrapper}
+                      setSelectedBrushWrapper={setSelectedBrushCb}
                       selectedBrush={selectedBrush}
                       setLastPaintedIndices={setLastPaintedIndices}/>
         </Fragment>
@@ -241,15 +239,13 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols, defaultBr
 
 function App() {
     const windowSize = useWindowSize();
-    const defaultBrush = getBrush("glider");
     // defaultBrush.distanceVec = brushDistanceVecFromCenter(defaultBrush);
     const [rows, setRows] = useState(Math.floor((windowSize.height + gridGap) / (CELLSIZE + gridGap)));
     const [cols, setCols] = useState(Math.floor((windowSize.width + gridGap) / (CELLSIZE + gridGap)));
     const seed = Array(rows * cols).fill(0);
 
     return (
-        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols}
-                      defaultBrush={defaultBrush}/>
+        <BoardWrapper rows={rows} cols={cols} seed={seed} windowSize={windowSize} setRows={setRows} setCols={setCols}/>
     );
 }
 

@@ -13,14 +13,19 @@ const addBrushName = (brush, patternString) => {
         comments.push(m[0]);
         searchIndex = commentRegex.lastIndex
     }
+    try {
+        brushName = comments[0].split("#N ")[1];
+        brush.name = brushName;
+        brush.displayName = brushName;
 
-    brushName = comments[0].split("#N ")[1];
-    brush.name = brushName;
-    brush.displayName = brushName;
+        // skip the newline symbol
+        searchIndex++;
+        return searchIndex
+    } catch (e) {
+        console.log(e);
+        console.log(patternString)
+    }
 
-    // skip the newline symbol
-    searchIndex++;
-    return searchIndex
 };
 
 const addRowsAndCols = (brush, patternString, searchIndex) => {
@@ -100,30 +105,23 @@ const addTemplateToBrush = (brush, patternString, searchIndex) => {
     brush.template = template;
 };
 
-const decoder = new TextDecoder("utf-8");
+export async function parseRle(url) {
+    let response = await fetch(url);
+    const decoder = new TextDecoder("utf-8");
+    const reader = response.body.getReader();
+    let rleFileString = '';
+    let brush = {};
 
-export function parseRle(url) {
-    fetch(url)
-        .then(response => {
-            const reader = response.body.getReader();
-            let result = '';
+    while (true) {
+        const {done, value} = await reader.read();
+        if (done) {
+            break
+        }
+        rleFileString += decoder.decode(value);
+    }
 
-            reader.read()
-                .then(function processText({done, value}) {
-                    if (done) {
-                        return result
-                    }
-
-                    result += decoder.decode(value)
-
-                    return reader.read().then(processText)
-
-                })
-                .then((patternString) => {
-                    let brush = {};
-                    let searchIndex = addBrushName(brush, patternString);
-                    searchIndex = addRowsAndCols(brush, patternString, searchIndex);
-                    addTemplateToBrush(brush, patternString, searchIndex);
-                })
-        })
+    let searchIndex = addBrushName(brush, rleFileString);
+    searchIndex = addRowsAndCols(brush, rleFileString, searchIndex);
+    addTemplateToBrush(brush, rleFileString, searchIndex);
+    return brush;
 }
