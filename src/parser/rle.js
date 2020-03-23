@@ -87,8 +87,15 @@ const addTemplateToBrush = (brush, patternString, searchIndex) => {
             }
             // $
             else if (chr === 36) {
+                // if we have count and end of line, we will need to add
+                // count-1 empty lines
+                count = (count - 1) * brush.cols;
                 // we don't care about line ends because we
                 // have a 1D brush template
+                while (count--) {
+                    template[positionInTemplate] = 0;
+                    positionInTemplate++;
+                }
             }// !
             else if (chr === 33) {
                 while (positionInTemplate < totalSize) {
