@@ -81,6 +81,11 @@ const brushList = [
     "twogun.rle",
     "wing.rle",
     "lobster.rle",
+    "loafer.rle",
+    "spacerake.rle",
+    "glidertrain.rle",
+    "gosperglider.rle",
+    "bigun.rle"
 ];
 
 export function useBrushes() {
