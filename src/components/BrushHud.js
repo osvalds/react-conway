@@ -71,16 +71,9 @@ const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
                 className="brush-option__canvas"
                 style={{width: bcwidth, height: bcheight}}
                 ref={canvasRef}/>
-            {/*<div>*/}
-            {/*    {brush.displayName} : {brush.cols} x {brush.rows}*/}
-            {/*</div>*/}
             <div className="brush-option__title">
                 {brush.displayName}
-                {/*: {cols} x {rows}*/}
             </div>
-            {/*<div>*/}
-            {/*    {cellSize}*/}
-            {/*</div>*/}
         </div>
     )
 });
