@@ -6,7 +6,7 @@ import useBoard, {
     getBoardWithAppliedBrushAndPaintedIndices,
     handleBoardDimensionChange
 } from "./hooks/useBoard";
-import {indexToCoord} from "./util"
+import {coordToIndex, indexToCoord} from "./util"
 import {defaultBrush, rotateBrush90deg} from "./components/Brushes";
 import Controls from "./components/Controls";
 
@@ -33,6 +33,7 @@ const intersection = (setA, setB) => {
 
 function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed, lastPaintedHoverIndices, lastPaintedIndices, setLastPaintedHoverIndices, setLastPaintedIndices, isRunning}) {
     const canvasRef = useRef(null);
+    const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
 
     const clearCanvas = (ctx) => {
         ctx.clearRect(0, 0, windowSize.width, windowSize.height);
@@ -141,14 +142,18 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
                 setHoverBoard(nBoard);
 
                 if (e.buttons === 1 || e.buttons === 3) {
-                    if (isRunning ||
-                        intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+                    const index = coordToIndex(lastHoverCoord, cols);
+                    if ((isRunning && index !== lastMouseDownIndex) ||
+                        (!isRunning && intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0)) {
+
                         const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush);
+
                         if (isRunning) {
                             setLastPaintedIndices(new Set());
                         } else {
                             setLastPaintedIndices(paintedIndices);
                         }
+                        setLastMouseDownIndex(index);
                         setBoard(nBoard)
                     }
                 }
