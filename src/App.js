@@ -217,6 +217,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
         <div ref={wrapperRef}>
             <BrushHud wrapperRef={wrapperRef}
                       brushes={brushes}
+                      selectedBrush={selectedBrush}
+                      onBrushSelect={setSelectedBrushCb}
                       brushesLoaded={brushesLoaded}/>
             <CanvasBoard board={board}
                          brush={selectedBrush}

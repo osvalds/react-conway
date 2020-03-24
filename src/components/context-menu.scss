@@ -1,7 +1,9 @@
 .context-menu {
   position: fixed;
-  background-color: rgba(34, 40, 49, 0.5);
+  background-color: rgba(34, 40, 49, 1);
   width: auto;
-  max-height: 300px;
+  max-height: 350px;
   overflow: auto;
+  //padding: 12px 0px;
+  border-radius: 5px;
 }
