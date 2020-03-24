@@ -4,6 +4,10 @@
   width: auto;
   max-height: 350px;
   overflow: auto;
-  //padding: 12px 0px;
+  display: none;
   border-radius: 5px;
+
+  &.true {
+    display: block;
+  }
 }

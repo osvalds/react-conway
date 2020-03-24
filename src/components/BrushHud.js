@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ContextMenu} from "./ContextMenu";
+import {ContextMenu, useBrushContextMenu} from "./ContextMenu";
 import {indexToCoord} from "../util";
 import {applyBrush} from "../hooks/useBoard";
 import {brushDistanceVecFromCenter, centerCoord} from "./Brushes";
@@ -80,14 +80,22 @@ const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
 
 export const BrushHud = React.memo(({wrapperRef, brushes, brushesLoaded, onBrushSelect, selectedBrush}) => {
 
+    const contextMenuRef = useRef(null);
+    const [clickPosition, isOpen, setIsOpen] = useBrushContextMenu(wrapperRef, contextMenuRef);
+
     const brushesLoading = <div className="brush-hud__loading">Loading</div>
     const brushlist = brushes.map(brush => <BrushOption key={brush.name}
                                                         brush={brush}
                                                         isSelected={selectedBrush.name === brush.name}
-                                                        onBrushSelect={onBrushSelect}/>)
-    console.log("selected", selectedBrush)
+                                                        onBrushSelect={(newBrush) => {
+                                                            onBrushSelect(newBrush);
+                                                            setIsOpen(false);
+                                                        }
+                                                        }/>)
     return (
-        <ContextMenu wrapperRef={wrapperRef}>
+        <ContextMenu contextMenuRef={contextMenuRef}
+                     isOpen={isOpen}
+                     clickPosition={clickPosition}>
             {brushesLoaded ? brushlist : brushesLoading}
         </ContextMenu>
     )

@@ -214,7 +214,7 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
     }, [memoRotateBrush]);
 
     return (
-        <div ref={wrapperRef}>
+        <div className="App" ref={wrapperRef}>
             <BrushHud wrapperRef={wrapperRef}
                       brushes={brushes}
                       selectedBrush={selectedBrush}

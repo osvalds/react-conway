@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
-export function useBrushContextMenu(wrapperRef) {
+export function useBrushContextMenu(wrapperRef, contextMenuRef) {
     const [isOpen, setIsOpen] = useState(false);
     const [clickPosition, setClickPosition] = useState({x: 0, y: 0});
 
@@ -21,16 +21,39 @@ export function useBrushContextMenu(wrapperRef) {
         };
     }, [wrapperRef, contextHandler]);
 
-    return [clickPosition, isOpen]
+    const handleClickOutside = e => {
+        if (contextMenuRef.current.contains(e.target)) {
+            // inside click
+            return;
+        }
+        e.stopPropagation();
+
+        // outside click
+        setIsOpen(false);
+
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
+
+    return [clickPosition, isOpen, setIsOpen]
 }
 
 
-export function ContextMenu({wrapperRef, children}) {
-    const [clickPosition, isOpen] = useBrushContextMenu(wrapperRef);
-
+export function ContextMenu({contextMenuRef, children, isOpen, clickPosition}) {
     return (
-        <div style={{left: clickPosition.x, top: clickPosition.y}}
-             className="context-menu">
+        <div ref={contextMenuRef}
+             style={{left: clickPosition.x, top: clickPosition.y}}
+             className={`context-menu ${isOpen}`}>
             {children}
         </div>
     )
