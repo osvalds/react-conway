@@ -82,6 +82,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             width={windowSize.width}
             height={windowSize.height}
             onClick={e => {
+                console.log("clciked canvas")
                 if (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
                     const cCoord = mousePosToCoord(e.pageX, e.pageY);
                     const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(cCoord, board, cols, rows, brush)

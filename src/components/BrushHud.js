@@ -90,10 +90,10 @@ export const BrushHud = React.memo(({wrapperRef, brushes, brushesLoaded, onBrush
                                                         onBrushSelect={(newBrush) => {
                                                             onBrushSelect(newBrush);
                                                             setIsOpen(false);
-                                                        }
-                                                        }/>)
+                                                        }}/>)
     return (
         <ContextMenu contextMenuRef={contextMenuRef}
+                     onBodyClick={() => setIsOpen(false)}
                      isOpen={isOpen}
                      clickPosition={clickPosition}>
             {brushesLoaded ? brushlist : brushesLoading}
