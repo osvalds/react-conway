@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import {ContextMenu, useBrushContextMenu} from "./ContextMenu";
 import {indexToCoord} from "../util";
 import {applyBrush} from "../hooks/useBoard";
@@ -8,6 +8,9 @@ const bcwidth = 300;
 const bcheight = 150;
 const gap = 1;
 
+// calculates board size for given template so
+// board stays to 2x1 dimensions and the brush is
+// still kinda centered
 const getPreviewDimensions = ({cols, rows}) => {
     if (rows >= cols) {
         return {
@@ -46,7 +49,7 @@ const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
     let aBrush = {
         ...brush,
         distanceVec: brushDistanceVecFromCenter(brush)
-    }
+    };
     let board = Array(rows * cols).fill(0);
 
     board = applyBrush(centerCoord({cols, rows}), board, cols, rows, aBrush);
@@ -62,7 +65,7 @@ const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
         for (let i = 0, boardLength = board.length; i < boardLength; i++) {
             drawCell(ctx, board[i], i, cols);
         }
-    }, []);
+    });
 
     return (
         <div onClick={e => onBrushSelect(aBrush)}

@@ -1,12 +1,16 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 
 export function useBrushContextMenu(wrapperRef, contextMenuRef) {
     const [isOpen, setIsOpen] = useState(false);
     const [clickPosition, setClickPosition] = useState({x: 0, y: 0});
     const [openUp, setOpenUp] = useState(false);
     const [openRight, setOpenRight] = useState(false);
+    const [usesTouch, setUsesTouch] = useState(false);
 
     const contextHandler = useCallback((event) => {
+        if (usesTouch) {
+            return;
+        }
         event.preventDefault();
 
         const menu = contextMenuRef.current;
@@ -28,16 +32,25 @@ export function useBrushContextMenu(wrapperRef, contextMenuRef) {
 
         setClickPosition({x, y});
         setIsOpen(true)
-    }, [setIsOpen, setClickPosition, setOpenUp, setOpenRight]);
+
+
+    }, [setIsOpen, setClickPosition, setOpenUp, setOpenRight, contextMenuRef, usesTouch]);
+
+    const touchHandler = useCallback((event) => {
+        setUsesTouch(true);
+    }, [setUsesTouch]);
+
 
     useEffect(() => {
         const ref = wrapperRef.current;
 
         ref.addEventListener("contextmenu", contextHandler, false);
+        ref.addEventListener("touchstart", touchHandler, false);
         return () => {
             ref.removeEventListener("contextmenu", contextHandler, false);
+            ref.removeEventListener("touchstart", touchHandler, false);
         };
-    }, [wrapperRef, contextHandler]);
+    }, [wrapperRef, contextHandler, touchHandler]);
 
     return [clickPosition, isOpen, setIsOpen, openUp, openRight]
 }
