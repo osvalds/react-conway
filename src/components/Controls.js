@@ -42,7 +42,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                     setIsRunning(false);
                     advanceBoard()
                 }}>
-                Next <span className="button__shortcut">[<span className="shift">⇧</span>+w]</span>
+                Next <span className="button__shortcut">[w]</span>
             </button>
             <button
                 className="button"
@@ -56,7 +56,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 onTouchStart={touchHoverClear}
                 onClick={memoBoardReset}>
                 Empty
-                <span className="button__shortcut">[<span className="shift">⇧</span>+e]</span>
+                <span className="button__shortcut"> [e]</span>
             </button>
             <button
                 className="button button--mobile"
@@ -64,7 +64,6 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                     setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
                 }}>
                 Rotate 90deg
-                <span className="button__shortcut">[<span className="shift">⇧</span>+r]</span>
             </button>
             <BrushSelector
                 onChange={e => {
@@ -81,7 +80,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                     setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
                 }}>
                 Rotate 90deg
-                <span className="button__shortcut">[<span className="shift">⇧</span>+r]</span>
+                <span className="button__shortcut"> [r]</span>
             </button>
         </div>
     );
