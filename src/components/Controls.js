@@ -55,7 +55,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 className="button"
                 onTouchStart={touchHoverClear}
                 onClick={memoBoardReset}>
-                Reset
+                Empty
                 <span className="button__shortcut">[<span className="shift">⇧</span>+e]</span>
             </button>
             <button

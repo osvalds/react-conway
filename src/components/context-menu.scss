@@ -5,16 +5,31 @@
   max-height: 350px;
   overflow: auto;
   border-radius: 5px;
-  left: -10000px;
-  top: -10000px;
 }
 .context-menu-wrapper {
   position: fixed;
   width: 100%;
   height: 100%;
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  left: -10000px;
+  top: -10000px;
+
+  .context-menu {
+    opacity: 0;
+    visibility: hidden;
+  }
 
   &.true {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    left: 0;
+    top: 0;
+
+    .context-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+
   }
 }

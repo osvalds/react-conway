@@ -49,7 +49,7 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
 
     const drawHoverCell = (ctx, cell, index, cols) => {
         // draws only the alive cell in the template
-        // paints the cell only if it has beeb set to be hovered
+        // paints the cell only if it has been set to be hovered
         if (cell === 1 && (isRunning || lastPaintedHoverIndices.has(index))) {
             const {x, y} = indexToCoord(index, cols);
             ctx.fillStyle = lastPaintedIndices.has(index) ? "rgb(200,87,125)" : "rgba(238, 238, 238, 0.3)";
@@ -82,7 +82,6 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             width={windowSize.width}
             height={windowSize.height}
             onClick={e => {
-                console.log("clciked canvas")
                 if (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
                     const cCoord = mousePosToCoord(e.pageX, e.pageY);
                     const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(cCoord, board, cols, rows, brush)

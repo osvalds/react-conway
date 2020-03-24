@@ -8,7 +8,7 @@ const bcwidth = 300;
 const bcheight = 150;
 const gap = 1;
 
-const getBoardDimensions = ({cols, rows}) => {
+const getPreviewDimensions = ({cols, rows}) => {
     if (rows >= cols) {
         return {
             rows: rows,
@@ -40,7 +40,7 @@ const getBoardDimensions = ({cols, rows}) => {
 const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
     const canvasRef = useRef(null);
 
-    const {cols, rows} = getBoardDimensions(brush);
+    const {cols, rows} = getPreviewDimensions(brush);
 
     const cellSize = ((bcwidth + gap) / cols) - gap;
     let aBrush = {
@@ -81,7 +81,7 @@ const BrushOption = React.memo(({brush, onBrushSelect, isSelected}) => {
 export const BrushHud = React.memo(({wrapperRef, brushes, brushesLoaded, onBrushSelect, selectedBrush}) => {
 
     const contextMenuRef = useRef(null);
-    const [clickPosition, isOpen, setIsOpen] = useBrushContextMenu(wrapperRef, contextMenuRef);
+    const [clickPosition, isOpen, setIsOpen, openUp, openRight] = useBrushContextMenu(wrapperRef, contextMenuRef);
 
     const brushesLoading = <div className="brush-hud__loading">Loading</div>
     const brushlist = brushes.map(brush => <BrushOption key={brush.name}
@@ -93,8 +93,10 @@ export const BrushHud = React.memo(({wrapperRef, brushes, brushesLoaded, onBrush
                                                         }}/>)
     return (
         <ContextMenu contextMenuRef={contextMenuRef}
-                     onBodyClick={() => setIsOpen(false)}
+                     onBodyClick={() => {setIsOpen(false)}}
                      isOpen={isOpen}
+                     openUp={openUp}
+                     openRight={openRight}
                      clickPosition={clickPosition}>
             {brushesLoaded ? brushlist : brushesLoading}
         </ContextMenu>
