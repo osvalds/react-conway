@@ -1,7 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {coordToIndex, indexToCoord} from "../util";
-import {parseRle} from "../parser/rle";
-
 
 export const centerCoord = ({rows, cols}) => {
     return {

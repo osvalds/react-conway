@@ -19,7 +19,7 @@ export function useBrushContextMenu(wrapperRef) {
         return () => {
             ref.removeEventListener("contextmenu", contextHandler, false);
         };
-    }, [wrapperRef]);
+    }, [wrapperRef, contextHandler]);
 
     return [clickPosition, isOpen]
 }

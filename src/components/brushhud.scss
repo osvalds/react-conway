@@ -1,0 +1,14 @@
+.brush-hud {
+  &__loading {
+    color: white;
+    font-style: italic;
+  }
+}
+
+.brush-option {
+  color: white;
+
+  &__canvas {
+    border: 1px solid red;
+  }
+}

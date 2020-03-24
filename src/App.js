@@ -1,4 +1,4 @@
-import React, {useRef, Fragment, useEffect, useState, useCallback} from 'react';
+import React, {useRef, useEffect, useState, useCallback} from 'react';
 import useInterval from "./hooks/useInterval";
 import './App.scss';
 import useWindowSize from "./hooks/useWindowSize";
@@ -9,7 +9,7 @@ import useBoard, {
 import {coordToIndex, indexToCoord} from "./util"
 import {defaultBrush, rotateBrush90deg} from "./components/Brushes";
 import Controls from "./components/Controls";
-import {BrushHud, useBrushContextMenu} from "./components/BrushHud";
+import {BrushHud} from "./components/BrushHud";
 import {useBrushes} from "./hooks/useBrushes";
 
 const INTERVAL = 50;
@@ -215,7 +215,9 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
 
     return (
         <div ref={wrapperRef}>
-            <BrushHud wrapperRef={wrapperRef}/>
+            <BrushHud wrapperRef={wrapperRef}
+                      brushes={brushes}
+                      brushesLoaded={brushesLoaded}/>
             <CanvasBoard board={board}
                          brush={selectedBrush}
                          setBoard={setBoard}
