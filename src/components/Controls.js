@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect} from "react";
-import {BrushSelector, getBrush, rotateBrush90deg, useBrushes} from "./Brushes";
+import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
+import {useBrushes} from "../hooks/useBrushes";
 
 export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices, cols, rows}) {
     const [brushes, brushesLoaded] = useBrushes(cols, rows);
