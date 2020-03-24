@@ -33,6 +33,8 @@ const intersection = (setA, setB) => {
     return _intersection
 };
 
+let touchMoved = false;
+
 function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows, brush, setHoverBoard, hoverBoard, seed, lastPaintedHoverIndices, lastPaintedIndices, setLastPaintedHoverIndices, setLastPaintedIndices, isRunning}) {
     const canvasRef = useRef(null);
     const [lastMouseDownIndex, setLastMouseDownIndex] = useState(null);
@@ -97,7 +99,10 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
             onMouseLeave={() => setHoverBoard(seed)}
             onTouchEnd={e => {
                 lastHoverCoord = mousePosToCoord(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-                if (isRunning || intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0) {
+
+                if (isRunning ||
+                    intersection(lastPaintedHoverIndices, lastPaintedIndices).size === 0 ||
+                    !touchMoved) {
                     const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, board, cols, rows, brush)
                     if (isRunning) {
                         setLastPaintedIndices(new Set());
@@ -106,10 +111,12 @@ function CanvasBoard({board, windowSize, cols, rows, setBoard, setCols, setRows,
                     }
                     setBoard(nBoard)
                 }
+                touchMoved = false;
                 setHoverBoard(seed);
                 e.preventDefault()
             }}
             onTouchMove={(e) => {
+                touchMoved = true;
                 lastHoverCoord = mousePosToCoord(e.touches[0].clientX, e.touches[0].clientY);
                 const {nBoard, paintedIndices} = getBoardWithAppliedBrushAndPaintedIndices(lastHoverCoord, seed, cols, rows, brush);
                 setLastPaintedHoverIndices(paintedIndices);
