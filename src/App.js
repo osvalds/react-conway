@@ -9,6 +9,8 @@ import useBoard, {
 import {coordToIndex, indexToCoord} from "./util"
 import {defaultBrush, rotateBrush90deg} from "./components/Brushes";
 import Controls from "./components/Controls";
+import {BrushHud, useBrushContextMenu} from "./components/BrushHud";
+import {useBrushes} from "./hooks/useBrushes";
 
 const INTERVAL = 50;
 const CELLSIZE = 15;
@@ -168,6 +170,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
     const [selectedBrush, setSelectedBrush] = useState(defaultBrush);
     const [lastPaintedIndices, setLastPaintedIndices] = useState(new Set());
     const [lastPaintedHoverIndices, setLastPaintedHoverIndices] = useState(new Set());
+    const [brushes, brushesLoaded] = useBrushes(cols, rows);
+    const wrapperRef = useRef(null);
 
     useInterval(advanceBoard, isRunning ? INTERVAL : null);
 
@@ -210,7 +214,8 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
     }, [memoRotateBrush]);
 
     return (
-        <Fragment>
+        <div ref={wrapperRef}>
+            <BrushHud wrapperRef={wrapperRef}/>
             <CanvasBoard board={board}
                          brush={selectedBrush}
                          setBoard={setBoard}
@@ -238,9 +243,9 @@ function BoardWrapper({cols, rows, seed, windowSize, setRows, setCols}) {
                       setSelectedBrushWrapper={setSelectedBrushCb}
                       selectedBrush={selectedBrush}
                       setLastPaintedIndices={setLastPaintedIndices}
-                      cols={cols}
-                      rows={rows}/>
-        </Fragment>
+                      brushes={brushes}
+                      brushesLoaded={brushesLoaded}/>
+        </div>
     )
 }
 

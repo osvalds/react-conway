@@ -2,8 +2,7 @@ import React, {useCallback, useEffect} from "react";
 import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
 import {useBrushes} from "../hooks/useBrushes";
 
-export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices, cols, rows}) {
-    const [brushes, brushesLoaded] = useBrushes(cols, rows);
+export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices, brushes, brushesLoaded}) {
 
     const memoBoardReset = useCallback((event) => {
         if (event.code === "KeyE" || event.type === "click") {
