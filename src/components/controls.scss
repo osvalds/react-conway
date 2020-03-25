@@ -18,9 +18,18 @@
     &__repo {
       display: block;
     }
-
   }
 
+  &__hint {
+    margin-right: 12px;
+    color: white;
+    display: none;
+  }
+  @media only screen and (min-width: 1000px) {
+    &__hint {
+      display: block;
+    }
+  }
   .button {
     margin-right: 12px;
   }

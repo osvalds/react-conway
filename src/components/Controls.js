@@ -75,6 +75,9 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 brushesLoaded={brushesLoaded}
                 brushes={brushes}
             />
+            <span className="controls__hint">
+                [right-click]
+            </span>
             <button
                 className="button button--desktop"
                 onClick={() => {
