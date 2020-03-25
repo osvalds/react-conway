@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect} from "react";
 import {BrushSelector, getBrush, rotateBrush90deg} from "./Brushes";
+import {ReactComponent as Logo} from "./gh.svg"
 
 export default function Controls({advanceBoard, toggleIsRunning, isRunning, setIsRunning, setBoard, board, setSelectedBrushWrapper, selectedBrush, touchHoverClear, setLastPaintedIndices, brushes, brushesLoaded}) {
 
@@ -63,7 +64,7 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 onClick={() => {
                     setSelectedBrushWrapper(rotateBrush90deg(selectedBrush))
                 }}>
-                Rotate 90deg
+                Rotate
             </button>
             <BrushSelector
                 onChange={e => {
@@ -82,6 +83,13 @@ export default function Controls({advanceBoard, toggleIsRunning, isRunning, setI
                 Rotate 90deg
                 <span className="button__shortcut"> [r]</span>
             </button>
+            <a className="controls__repo"
+               target="_blank"
+               rel="noopener noreferrer"
+               href="https://github.com/osvalds/react-conway">
+                <Logo/>
+            </a>
+
         </div>
     );
 }
