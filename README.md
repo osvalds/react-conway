@@ -1,8 +1,10 @@
 ## Conway's game of life with React Hooks and Canvas
+![screenshot](public/images/screenshot.png)
 
-This repo contains implemented [Conway's game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
-implemented with React Hooks. The board is displayed on `<canvas>` for performance reasons. The board is
-represented as a 1D array (also for perf) and supports window resizing. 
+This repo contains [Conway's game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
+implemented with React Hooks. The board is rendered on `<canvas>` and in memory is represented as
+a 1D array (for performance). The app also can parse `.rle` files for easier brush library management.
+You can play around with the game [here](https://osvalds.github.io/react-conway/).
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
